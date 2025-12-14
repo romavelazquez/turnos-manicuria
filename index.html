@@ -3,60 +3,66 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agenda de Turnos - Manicurista</title>
+<title>Agenda Manicuría</title>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
 <div class="container">
-    <h1>Agenda de Turnos - Manicurista</h1>
+<h1>Agenda de Turnos</h1>
 
-    <!-- Botón acceso administrador -->
-    <button id="adminButton" class="btn-admin">Acceso Administrador</button>
+<button id="btnAdmin" class="btn-admin">Ingresar como administradora</button>
 
-    <!-- Panel administrativo -->
-    <div id="adminPanel" class="admin-panel">
-        <h3>Funciones Administrativas</h3>
-        <button class="btn-clean" onclick="limpiarTurnos()">Limpiar todos los turnos</button>
-        <h4>Agenda por fecha</h4>
-        <div id="agendaDiaria"></div>
-    </div>
+<!-- PANEL ADMIN -->
+<div id="adminPanel" class="admin-panel">
 
-    <h2>Reservar un turno</h2>
-    <form id="turnoForm" class="turno-form">
-        <label for="nombre">Nombre de la clienta:</label>
-        <input type="text" id="nombre" name="nombre" required>
+<h2>Menú Administrador</h2>
 
-        <label for="telefono">Teléfono (ej: 249XXXXXXX, 223XXXXXXX, 11XXXXXXX):</label>
-        <input type="tel" id="telefono" name="telefono"
-               pattern="^(249|223|2281|2284|2244|2297|11)\d{6,8}$"
-               required placeholder="Característica + número, ej: 2491234567">
+<!-- LIMPIAR -->
+<button class="btn-danger" onclick="limpiarTodo()">🧹 Limpiar todos los turnos</button>
 
-        <label for="fecha">Seleccionar día:</label>
-        <input type="date" id="fecha" name="fecha" required min="<?= new Date().toISOString().split('T')[0] ?>">
+<hr>
 
-        <label for="servicio">Servicio:</label>
-        <select id="servicio" name="servicio" required>
-            <option value="semiDuracion">Semi-duración</option>
-            <option value="bellezaPies">Belleza de pies</option>
-            <option value="tradicional">Tradicional</option>
-            <option value="poligel">Poligel</option>
-            <option value="softgel">Softgel</option>
-        </select>
+<!-- BLOQUEAR HORARIOS -->
+<h3>Bloquear horarios de un día</h3>
+<input type="date" id="adminFechaBloqueo">
+<div id="horariosBloqueo"></div>
+<button onclick="guardarBloqueos()">Guardar bloqueos</button>
 
-        <label for="hora">Horario:</label>
-        <select id="hora" name="hora" required></select>
+<hr>
 
-        <button type="submit" class="btn-submit">Reservar turno</button>
-    </form>
+<!-- MODIFICAR TURNOS -->
+<h3>Ver / modificar turnos</h3>
+<input type="date" id="adminFechaTurnos">
+<div id="listaTurnosAdmin"></div>
 
-    <!-- Pop-up de confirmación -->
-    <div id="popup" class="popup">
-        <h3>Confirmar Reserva</h3>
-        <p id="popupDetails"></p>
-        <button class="btn-confirm" onclick="confirmarReserva()">Confirmar</button>
-        <button class="btn-cancel" onclick="cancelarReserva()">Cancelar</button>
-    </div>
+</div>
+
+<hr>
+
+<h2>Reservar turno</h2>
+
+<form id="formTurno">
+<input type="text" id="nombre" placeholder="Nombre" required>
+
+<input type="tel" id="telefono"
+pattern="^(249|223|2281|2284|2244|2297|11)\d{6,8}$"
+placeholder="Ej: 2491234567" required>
+
+<input type="date" id="fecha" required>
+
+<select id="servicio">
+<option value="tradicional">Tradicional</option>
+<option value="semi">Semi</option>
+<option value="poligel">Poligel</option>
+<option value="softgel">Softgel</option>
+</select>
+
+<select id="hora"></select>
+
+<button type="submit">Reservar</button>
+</form>
+
 </div>
 
 <script src="script.js"></script>
