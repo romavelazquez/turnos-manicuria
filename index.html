@@ -2,70 +2,60 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Turnos Manicuría</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Turnos - Manicurista</title>
     <link rel="stylessheet" href="styles.css">
 </head>
 <body>
 
-<!-- LOGIN ADMIN -->
-<div id="loginAdmin">
-    <h2>Acceso Administrador 🔐</h2>
-    <input type="password" id="claveAdmin" placeholder="Clave">
-    <button onclick="loginAdmin()">Ingresar</button>
-</div>
+    <div class="container">
+        <h1>Agenda de Turnos - Manicurista</h1>
 
-<!-- PANEL ADMIN -->
-<div id="panelAdmin" style="display:none;">
-    <h2>Panel Administrador 💅</h2>
-    <label>Ver agenda del día</label>
-    <input type="date" id="fechaAgendaAdmin" onchange="mostrarAgendaAdmin()">
-    <ul id="agendaAdmin"></ul>
-    <button onclick="borrarTodosLosTurnos()" style="background:#d32f2f;">🗑️ Borrar TODOS los turnos</button>
-    <button onclick="cerrarSesion()">Cerrar sesión</button>
-</div>
+        <!-- Botón de acceso administrador -->
+        <button id="adminButton" class="btn-admin">Acceso Administrador</button>
 
-<!-- RESERVA NORMAL -->
-<div>
-    <h1>Reserva de Turno 💅</h1>
+        <!-- Panel de administración oculto -->
+        <div id="adminPanel" class="admin-panel">
+            <h3>Funciones Administrativas</h3>
+            <button class="btn-clean" onclick="limpiarTurnos()">Limpiar todos los turnos</button>
+        </div>
 
-    <label>Nombre</label>
-    <input type="text" id="nombre">
+        <h2>Reservar un turno</h2>
 
-    <label>Teléfono</label>
-    <input type="tel" id="telefono">
+        <!-- Formulario de reserva de turnos -->
+        <form id="turnoForm" class="turno-form">
+            <label for="nombre">Nombre de la clienta:</label>
+            <input type="text" id="nombre" name="nombre" required>
 
-    <label>Fecha</label>
-    <input type="date" id="fecha" onchange="cargarHorariosDisponibles(); mostrarMensajeReserva()">
+            <label for="telefono">Teléfono (ej: +54249XXXXXXX, +54223XXXXXXX):</label>
+            <input type="tel" id="telefono" name="telefono" 
+                   pattern="^\+54(249|223|2281|2284|2244|2297)\d{6,8}$" required
+                   placeholder="+54...">
 
-    <label>Hora</label>
-    <select id="hora" onchange="mostrarMensajeReserva()"></select>
+            <label for="servicio">Servicio:</label>
+            <select id="servicio" name="servicio" required>
+                <option value="semiDuracion">Semi-duración</option>
+                <option value="bellezaPies">Belleza de pies</option>
+                <option value="tradicional">Tradicional</option>
+                <option value="poligel">Poligel</option>
+                <option value="softgel">Softgel</option>
+            </select>
 
-    <label>Servicio</label>
-    <select id="servicio" onchange="mostrarMensajeReserva()">
-        <option value="semi">Semi</option>
-        <option value="pies">Belleza de pies</option>
-        <option value="tradicional">Tradicional</option>
-        <option value="poligel">Poligel</option>
-        <option value="softgel">Softgel</option>
-    </select>
+            <label for="hora">Horario:</label>
+            <select id="hora" name="hora" required></select>
 
-    <div id="mensajeReserva" style="margin-top:10px; font-weight:bold;"></div>
+            <button type="submit" class="btn-submit">Reservar turno</button>
+        </form>
 
-    <button onclick="confirmarReserva()">Confirmar Reserva</button>
-</div>
+        <!-- Pop-up de confirmación de reserva -->
+        <div id="popup" class="popup">
+            <h3>Confirmar Reserva</h3>
+            <p id="popupDetails"></p>
+            <button class="btn-confirm" onclick="confirmarReserva()">Confirmar</button>
+            <button class="btn-cancel" onclick="cancelarReserva()">Cancelar</button>
+        </div>
+    </div>
 
-<div>
-    <h2>Cancelar turno ❌</h2>
-    <input type="tel" id="telefonoCancelar" placeholder="Teléfono">
-    <button onclick="cancelarTurno()">Cancelar</button>
-</div>
-
-<div>
-    <h2>Agenda diaria</h2>
-    <input type="date" id="fechaAgenda" onchange="mostrarAgenda()">
-    <ul id="agenda"></ul>
-</div>
-
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
