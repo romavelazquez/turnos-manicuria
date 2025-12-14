@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Turnos Manicuría</title>
+    <link rel="stylessheet" href="styles.css">
+</head>
+<body>
+
+<!-- LOGIN ADMIN -->
+<div id="loginAdmin">
+    <h2>Acceso Administrador 🔐</h2>
+    <input type="password" id="claveAdmin" placeholder="Clave">
+    <button onclick="loginAdmin()">Ingresar</button>
+</div>
+
+<!-- PANEL ADMIN -->
+<div id="panelAdmin" style="display:none;">
+    <h2>Panel Administrador 💅</h2>
+    <label>Ver agenda del día</label>
+    <input type="date" id="fechaAgendaAdmin" onchange="mostrarAgendaAdmin()">
+    <ul id="agendaAdmin"></ul>
+    <button onclick="borrarTodosLosTurnos()" style="background:#d32f2f;">🗑️ Borrar TODOS los turnos</button>
+    <button onclick="cerrarSesion()">Cerrar sesión</button>
+</div>
+
+<!-- RESERVA NORMAL -->
+<div>
+    <h1>Reserva de Turno 💅</h1>
+
+    <label>Nombre</label>
+    <input type="text" id="nombre">
+
+    <label>Teléfono</label>
+    <input type="tel" id="telefono">
+
+    <label>Fecha</label>
+    <input type="date" id="fecha" onchange="cargarHorariosDisponibles(); mostrarMensajeReserva()">
+
+    <label>Hora</label>
+    <select id="hora" onchange="mostrarMensajeReserva()"></select>
+
+    <label>Servicio</label>
+    <select id="servicio" onchange="mostrarMensajeReserva()">
+        <option value="semi">Semi</option>
+        <option value="pies">Belleza de pies</option>
+        <option value="tradicional">Tradicional</option>
+        <option value="poligel">Poligel</option>
+        <option value="softgel">Softgel</option>
+    </select>
+
+    <div id="mensajeReserva" style="margin-top:10px; font-weight:bold;"></div>
+
+    <button onclick="confirmarReserva()">Confirmar Reserva</button>
+</div>
+
+<div>
+    <h2>Cancelar turno ❌</h2>
+    <input type="tel" id="telefonoCancelar" placeholder="Teléfono">
+    <button onclick="cancelarTurno()">Cancelar</button>
+</div>
+
+<div>
+    <h2>Agenda diaria</h2>
+    <input type="date" id="fechaAgenda" onchange="mostrarAgenda()">
+    <ul id="agenda"></ul>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
