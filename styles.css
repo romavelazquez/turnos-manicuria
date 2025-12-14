@@ -1,106 +1,131 @@
-/* Estilo general */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f2f2f2;
+    font-family: 'Arial', sans-serif;
+    background-color: #f5f5f5;
     margin: 0;
     padding: 0;
 }
 
 .container {
-    max-width: 500px;
-    margin: 30px auto;
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    max-width: 600px;
+    margin: 20px auto;
+    background: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 
-/* Formularios */
+h1, h2, h3, h4 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 15px;
+}
+
 .turno-form label {
     display: block;
     margin-top: 10px;
+    font-weight: bold;
+    color: #555;
 }
 
 .turno-form input, .turno-form select {
     width: 100%;
-    padding: 8px;
+    padding: 10px;
     margin-top: 5px;
     box-sizing: border-box;
-    border-radius: 5px;
+    border-radius: 6px;
     border: 1px solid #ccc;
+    font-size: 14px;
 }
 
-/* Botones */
+.turno-form input:focus, .turno-form select:focus {
+    border-color: #2196F3;
+    outline: none;
+}
+
 button {
     margin-top: 15px;
-    padding: 10px;
+    padding: 12px;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background 0.3s;
 }
 
-.btn-submit {
-    background-color: #4CAF50;
-    color: white;
-    width: 100%;
-}
+.btn-submit { background-color: #4CAF50; color: white; width: 100%; }
+.btn-submit:hover { background-color: #45a049; }
+.btn-admin { background-color: #2196F3; color: white; width: 100%; }
+.btn-admin:hover { background-color: #0b7dda; }
+.btn-clean { background-color: #f44336; color: white; width: 100%; }
+.btn-clean:hover { background-color: #da190b; }
+.btn-confirm { background-color: #4CAF50; color: white; margin-right: 10px; }
+.btn-confirm:hover { background-color: #45a049; }
+.btn-cancel { background-color: #f44336; color: white; }
+.btn-cancel:hover { background-color: #da190b; }
 
-.btn-submit:hover {
-    background-color: #45a049;
-}
-
-.btn-admin {
-    background-color: #2196F3;
-    color: white;
-}
-
-.btn-admin:hover {
-    background-color: #0b7dda;
-}
-
-.btn-clean {
-    background-color: #f44336;
-    color: white;
-}
-
-.btn-clean:hover {
-    background-color: #da190b;
-}
-
-.btn-confirm {
-    background-color: #4CAF50;
-    color: white;
-}
-
-.btn-confirm:hover {
-    background-color: #45a049;
-}
-
-.btn-cancel {
-    background-color: #f44336;
-    color: white;
-}
-
-.btn-cancel:hover {
-    background-color: #da190b;
-}
-
-/* Panel administrador */
 .admin-panel {
     display: none;
     background-color: #f9f9f9;
-    padding: 10px;
-    margin-top: 10px;
+    padding: 15px;
+    margin-top: 15px;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 8px;
 }
 
-/* Pop-up */
+#agendaDiaria { margin-top: 15px; }
+
+.turnoItem {
+    background-color: #e8f0fe;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 6px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.turnoItem button {
+    margin: 5px 0 0 0;
+    padding: 6px 10px;
+    font-size: 12px;
+}
+
 .popup {
     display: none;
-    border: 1px solid black;
-    padding: 10px;
-    background: #f5f5f5;
-    margin-top: 20px;
-    border-radius: 5px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 400px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    z-index: 1000;
+}
+
+#popupDetails {
+    margin-bottom: 20px;
+    font-size: 16px;
+    color: #333;
+}
+
+.popup::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.4);
+    z-index: -1;
+}
+
+@media screen and (max-width: 480px){
+    .container { margin: 10px; padding: 15px; }
+    .turno-form input, .turno-form select { font-size: 13px; padding: 8px; }
+    button { font-size: 13px; padding: 10px; }
+    .turnoItem { flex-direction: column; align-items: flex-start; }
+    .turnoItem button { width: 100%; }
 }
