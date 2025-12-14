@@ -4,11 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Agenda Manicuría</title>
-<link rel="stylesheet" href="styles.css">
+<link rel="stylessheet" href="styles.css">
 </head>
 <body>
 
 <div class="container">
+
 <h1>Agenda de Turnos</h1>
 
 <button id="btnAdmin" class="btn-admin">Ingresar como administradora</button>
@@ -16,14 +17,14 @@
 <!-- PANEL ADMIN -->
 <div id="adminPanel" class="admin-panel">
 
+<button class="btn-cerrar" onclick="cerrarSesionAdmin()">Cerrar sesión</button>
+
 <h2>Menú Administrador</h2>
 
-<!-- LIMPIAR -->
 <button class="btn-danger" onclick="limpiarTodo()">🧹 Limpiar todos los turnos</button>
 
 <hr>
 
-<!-- BLOQUEAR HORARIOS -->
 <h3>Bloquear horarios de un día</h3>
 <input type="date" id="adminFechaBloqueo">
 <div id="horariosBloqueo"></div>
@@ -31,8 +32,7 @@
 
 <hr>
 
-<!-- MODIFICAR TURNOS -->
-<h3>Ver / modificar turnos</h3>
+<h3>Ver / cancelar turnos de un día</h3>
 <input type="date" id="adminFechaTurnos">
 <div id="listaTurnosAdmin"></div>
 
@@ -43,24 +43,30 @@
 <h2>Reservar turno</h2>
 
 <form id="formTurno">
-<input type="text" id="nombre" placeholder="Nombre" required>
+
+<input type="text" id="nombre" placeholder="Nombre completo" required>
 
 <input type="tel" id="telefono"
+placeholder="Ej: 2491234567"
 pattern="^(249|223|2281|2284|2244|2297|11)\d{6,8}$"
-placeholder="Ej: 2491234567" required>
+required>
 
 <input type="date" id="fecha" required>
 
-<select id="servicio">
+<select id="servicio" required>
+<option value="">Seleccionar servicio</option>
 <option value="tradicional">Tradicional</option>
-<option value="semi">Semi</option>
+<option value="semi">Semi permanente</option>
 <option value="poligel">Poligel</option>
 <option value="softgel">Softgel</option>
 </select>
 
-<select id="hora"></select>
+<select id="hora" required>
+<option value="">Seleccionar horario</option>
+</select>
 
-<button type="submit">Reservar</button>
+<button type="submit">Reservar turno</button>
+
 </form>
 
 </div>

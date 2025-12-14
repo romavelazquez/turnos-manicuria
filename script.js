@@ -1,5 +1,9 @@
 const adminPass = "admin123";
-const horasBase = ["9:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00"];
+
+const horasBase = [
+  "9:00","10:00","11:00","12:00",
+  "13:00","14:00","15:00","16:00"
+];
 
 const duraciones = {
   tradicional: 60,
@@ -8,24 +12,29 @@ const duraciones = {
   softgel: 90
 };
 
-// ===== ADMIN LOGIN =====
+// ===== LOGIN ADMIN =====
 document.getElementById("btnAdmin").onclick = () => {
-  const pass = prompt("Contraseña admin");
+  const pass = prompt("Contraseña administrador");
   if(pass === adminPass){
     document.getElementById("adminPanel").style.display = "block";
-  } else alert("Incorrecta");
+  } else alert("Contraseña incorrecta");
 };
+
+function cerrarSesionAdmin(){
+  document.getElementById("adminPanel").style.display = "none";
+}
 
 // ===== LIMPIAR =====
 function limpiarTodo(){
-  if(confirm("Eliminar TODOS los turnos?")){
+  if(confirm("Eliminar TODOS los turnos y bloqueos?")){
     localStorage.clear();
     location.reload();
   }
 }
 
-// ===== BLOQUEOS =====
-document.getElementById("adminFechaBloqueo").addEventListener("change", mostrarHorariosBloqueo);
+// ===== BLOQUEAR HORARIOS =====
+document.getElementById("adminFechaBloqueo")
+  .addEventListener("change", mostrarHorariosBloqueo);
 
 function mostrarHorariosBloqueo(){
   const fecha = adminFechaBloqueo.value;
@@ -34,11 +43,12 @@ function mostrarHorariosBloqueo(){
 
   horasBase.forEach(h=>{
     const chk = document.createElement("input");
-    chk.type="checkbox";
-    chk.value=h;
-    chk.checked = bloqueos[fecha]?.includes(h);
+    chk.type = "checkbox";
+    chk.value = h;
+    chk.checked = bloqueos[fecha]?.includes(h) || false;
 
-    horariosBloqueo.append(chk, document.createTextNode(" "+h), document.createElement("br"));
+    horariosBloqueo.append(chk, document.createTextNode(" "+h));
+    horariosBloqueo.append(document.createElement("br"));
   });
 }
 
@@ -46,38 +56,41 @@ function guardarBloqueos(){
   const fecha = adminFechaBloqueo.value;
   const checks = horariosBloqueo.querySelectorAll("input");
   let bloqueos = JSON.parse(localStorage.getItem("bloqueos")) || {};
-  bloqueos[fecha] = [];
 
+  bloqueos[fecha] = [];
   checks.forEach(c=>{
     if(c.checked) bloqueos[fecha].push(c.value);
   });
 
   localStorage.setItem("bloqueos", JSON.stringify(bloqueos));
-  alert("Bloqueos guardados");
+  alert("Horarios bloqueados guardados");
 }
 
-// ===== VER / MODIFICAR TURNOS =====
-document.getElementById("adminFechaTurnos").addEventListener("change", mostrarTurnosAdmin);
+// ===== VER / CANCELAR TURNOS =====
+document.getElementById("adminFechaTurnos")
+  .addEventListener("change", mostrarTurnosAdmin);
 
 function mostrarTurnosAdmin(){
   const fecha = adminFechaTurnos.value;
   const turnos = JSON.parse(localStorage.getItem("turnos")) || [];
-  listaTurnosAdmin.innerHTML="";
+  listaTurnosAdmin.innerHTML = "";
 
-  turnos.filter(t=>t.fecha===fecha).forEach((t,i)=>{
-    const div=document.createElement("div");
-    div.innerHTML=`
-    ${t.hora} - ${t.nombre}
-    <button onclick="cancelarTurno(${i})">❌</button>
-    `;
-    listaTurnosAdmin.appendChild(div);
-  });
+  turnos
+    .filter(t => t.fecha === fecha)
+    .forEach((t,i)=>{
+      const div = document.createElement("div");
+      div.innerHTML = `
+        ${t.hora} - ${t.nombre}
+        <button onclick="cancelarTurno(${i})">❌</button>
+      `;
+      listaTurnosAdmin.appendChild(div);
+    });
 }
 
-function cancelarTurno(i){
-  let turnos = JSON.parse(localStorage.getItem("turnos"));
-  turnos.splice(i,1);
-  localStorage.setItem("turnos",JSON.stringify(turnos));
+function cancelarTurno(index){
+  let turnos = JSON.parse(localStorage.getItem("turnos")) || [];
+  turnos.splice(index,1);
+  localStorage.setItem("turnos", JSON.stringify(turnos));
   mostrarTurnosAdmin();
 }
 
@@ -86,29 +99,59 @@ document.getElementById("fecha").addEventListener("change", cargarHorarios);
 document.getElementById("servicio").addEventListener("change", cargarHorarios);
 
 function cargarHorarios(){
-  const fecha = fechaInput.value;
-  const bloqueos = JSON.parse(localStorage.getItem("bloqueos")) || {};
-  hora.innerHTML="";
+  const fecha = document.getElementById("fecha").value;
+  const servicio = document.getElementById("servicio").value;
+  const selectHora = document.getElementById("hora");
+  selectHora.innerHTML = '<option value="">Seleccionar horario</option>';
 
-  horasBase.forEach(h=>{
-    if(!bloqueos[fecha]?.includes(h)){
-      hora.add(new Option(h,h));
+  if(!fecha || !servicio) return;
+
+  const turnos = JSON.parse(localStorage.getItem("turnos")) || [];
+  const bloqueos = JSON.parse(localStorage.getItem("bloqueos")) || {};
+  const dur = duraciones[servicio] / 60;
+
+  for(let i=0;i<horasBase.length;i++){
+    let libre = true;
+
+    // Bloqueos admin
+    if(bloqueos[fecha]?.includes(horasBase[i])){
+      libre = false;
     }
-  });
+
+    // Turnos existentes
+    turnos.forEach(t=>{
+      if(t.fecha === fecha){
+        const idx = horasBase.indexOf(t.hora);
+        const d = duraciones[t.servicio] / 60;
+        if(i >= idx && i < idx + d) libre = false;
+      }
+    });
+
+    // Duración del servicio
+    if(i + dur > horasBase.length) libre = false;
+
+    if(libre){
+      selectHora.add(new Option(horasBase[i], horasBase[i]));
+    }
+  }
 }
 
-formTurno.onsubmit = e =>{
+// ===== RESERVAR =====
+document.getElementById("formTurno").onsubmit = e =>{
   e.preventDefault();
-  const turno={
-    nombre:nombre.value,
-    telefono:telefono.value,
-    fecha:fecha.value,
-    hora:hora.value,
-    servicio:servicio.value
+
+  const turno = {
+    nombre: nombre.value,
+    telefono: telefono.value,
+    fecha: fecha.value,
+    servicio: servicio.value,
+    hora: hora.value
   };
+
   const turnos = JSON.parse(localStorage.getItem("turnos")) || [];
   turnos.push(turno);
-  localStorage.setItem("turnos",JSON.stringify(turnos));
-  alert("Turno reservado");
-  formTurno.reset();
+  localStorage.setItem("turnos", JSON.stringify(turnos));
+
+  alert("Turno reservado correctamente");
+  e.target.reset();
 };
