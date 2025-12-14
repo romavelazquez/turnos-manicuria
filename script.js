@@ -1,6 +1,5 @@
-// Configuración
 const adminPassword = "admin123";
-const numeroManicurista = "+541158428854"; // WhatsApp manicurista
+const numeroManicurista = "+541158428854";
 
 // Duraciones en minutos
 const serviciosDuracion = {
@@ -14,7 +13,7 @@ const serviciosDuracion = {
 // Horarios base
 const horasBase = ["9:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00"];
 
-// Administrador
+// Acceso administrador
 document.getElementById("adminButton").addEventListener("click", function() {
     const password = prompt("Ingrese la contraseña de administrador:");
     if(password === adminPassword){
@@ -25,7 +24,7 @@ document.getElementById("adminButton").addEventListener("click", function() {
     }
 });
 
-// Limpiar todos los turnos
+// Limpiar turnos
 function limpiarTurnos() {
     if(confirm("¿Desea eliminar todos los turnos?")){
         localStorage.removeItem("turnos");
@@ -34,12 +33,14 @@ function limpiarTurnos() {
     }
 }
 
-// Cargar horarios disponibles según turnos y duración
+// Cargar horarios disponibles según fecha
 function cargarHorariosDisponibles() {
+    const fecha = document.getElementById("fecha").value;
+    if(!fecha) return;
+
     const turnos = JSON.parse(localStorage.getItem("turnos")) || [];
     const servicioSeleccionado = document.getElementById("servicio").value;
     const duracion = serviciosDuracion[servicioSeleccionado];
-    const slotsDuracion = Math.ceil(duracion/60);
 
     let horariosDisponibles = [];
 
@@ -47,11 +48,13 @@ function cargarHorariosDisponibles() {
         const hora = horasBase[i];
         let ocupado = false;
         for(const t of turnos){
-            const tIndex = horasBase.indexOf(t.hora);
-            const tDur = Math.ceil(serviciosDuracion[t.servicio]/60);
-            if(i >= tIndex && i < tIndex + tDur){
-                ocupado = true;
-                break;
+            if(t.fecha === fecha){
+                const tIndex = horasBase.indexOf(t.hora);
+                const tDur = Math.ceil(serviciosDuracion[t.servicio]/60);
+                if(i >= tIndex && i < tIndex + tDur){
+                    ocupado = true;
+                    break;
+                }
             }
         }
         if(!ocupado){
@@ -71,6 +74,7 @@ function cargarHorariosDisponibles() {
 
 window.onload = cargarHorariosDisponibles;
 document.getElementById("servicio").addEventListener("change", cargarHorariosDisponibles);
+document.getElementById("fecha").addEventListener("change", cargarHorariosDisponibles);
 
 // Formulario reserva
 document.getElementById("turnoForm").addEventListener("submit", function(event){
@@ -80,17 +84,18 @@ document.getElementById("turnoForm").addEventListener("submit", function(event){
     const telefono = document.getElementById("telefono").value;
     const servicio = document.getElementById("servicio").value;
     const hora = document.getElementById("hora").value;
+    const fecha = document.getElementById("fecha").value;
 
-    if(!nombre || !telefono || !servicio || !hora){
+    if(!nombre || !telefono || !servicio || !hora || !fecha){
         alert("Complete todos los campos");
         return;
     }
 
-    const reservaTemp = { nombre, telefono, servicio, hora };
+    const reservaTemp = { nombre, telefono, servicio, hora, fecha };
     localStorage.setItem("reservaTemp", JSON.stringify(reservaTemp));
 
-    document.getElementById("popupDetails").innerHTML = 
-        `Nombre: ${nombre}<br>Tel: ${telefono}<br>Servicio: ${servicio}<br>Hora: ${hora}`;
+    document.getElementById("popupDetails").innerHTML =
+        `Nombre: ${nombre}<br>Tel: ${telefono}<br>Servicio: ${servicio}<br>Fecha: ${fecha}<br>Hora: ${hora}`;
     document.getElementById("popup").style.display = "block";
 });
 
@@ -118,10 +123,10 @@ function cancelarReserva(){
 
 // WhatsApp
 function enviarWhatsApp(reserva){
-    const telefonoCliente = "+54" + reserva.telefono; // agregamos +54 automáticamente
+    const telefonoCliente = "+54" + reserva.telefono;
 
-    const mensajeCliente = `Hola ${reserva.nombre}, tu turno de ${reserva.servicio} ha sido confirmado a las ${reserva.hora}.`;
-    const mensajeManicurista = `Nuevo turno:\nCliente: ${reserva.nombre}\nTel: ${reserva.telefono}\nServicio: ${reserva.servicio}\nHora: ${reserva.hora}`;
+    const mensajeCliente = `Hola ${reserva.nombre}, tu turno de ${reserva.servicio} ha sido confirmado el ${reserva.fecha} a las ${reserva.hora}.`;
+    const mensajeManicurista = `Nuevo turno:\nCliente: ${reserva.nombre}\nTel: ${reserva.telefono}\nServicio: ${reserva.servicio}\nFecha: ${reserva.fecha}\nHora: ${reserva.hora}`;
 
     const urlCliente = `https://wa.me/${telefonoCliente.replace('+','')}?text=${encodeURIComponent(mensajeCliente)}`;
     const urlManicurista = `https://wa.me/${numeroManicurista.replace('+','')}?text=${encodeURIComponent(mensajeManicurista)}`;
@@ -130,41 +135,47 @@ function enviarWhatsApp(reserva){
     window.open(urlManicurista, "_blank");
 }
 
-// Mostrar agenda diaria en admin
+// Mostrar agenda diaria por fecha
 function mostrarAgenda(){
+    const fecha = prompt("Ingrese fecha para ver agenda (YYYY-MM-DD):");
     const agendaDiv = document.getElementById("agendaDiaria");
     const turnos = JSON.parse(localStorage.getItem("turnos")) || [];
     agendaDiv.innerHTML = "";
 
-    if(turnos.length === 0){
-        agendaDiv.innerHTML = "<p>No hay turnos programados hoy.</p>";
+    const turnosDelDia = turnos.filter(t => t.fecha === fecha);
+
+    if(turnosDelDia.length === 0){
+        agendaDiv.innerHTML = "<p>No hay turnos programados ese día.</p>";
         return;
     }
 
-    turnos.forEach((t,index)=>{
+    turnosDelDia.forEach((t,index)=>{
         const turnoDiv = document.createElement("div");
         turnoDiv.className = "turnoItem";
         turnoDiv.innerHTML = `Hora: ${t.hora} | Cliente: ${t.nombre} | Servicio: ${t.servicio} | Tel: ${t.telefono} 
-        <button onclick="modificarTurno(${index})">Modificar</button>`;
+        <button onclick="modificarTurno('${t.fecha}', ${index})">Modificar</button>`;
         agendaDiv.appendChild(turnoDiv);
     });
 }
 
 // Modificar turno
-function modificarTurno(index){
+function modificarTurno(fecha, index){
     const turnos = JSON.parse(localStorage.getItem("turnos")) || [];
-    const t = turnos[index];
+    const turnosDelDia = turnos.filter(t => t.fecha === fecha);
+    const t = turnosDelDia[index];
 
     const nuevaHora = prompt(`Modificar horario del turno de ${t.nombre} (actual: ${t.hora})`, t.hora);
     if(nuevaHora && horasBase.includes(nuevaHora)){
-        t.hora = nuevaHora;
-        turnos[index] = t;
+        // Actualizar hora en el array original
+        const idx = turnos.findIndex(item => item.nombre === t.nombre && item.fecha === t.fecha && item.hora === t.hora);
+        turnos[idx].hora = nuevaHora;
         localStorage.setItem("turnos", JSON.stringify(turnos));
         mostrarAgenda();
         cargarHorariosDisponibles();
     } else if(nuevaHora === ""){
         if(confirm("Desea eliminar este turno?")){
-            turnos.splice(index,1);
+            const idx = turnos.findIndex(item => item.nombre === t.nombre && item.fecha === t.fecha && item.hora === t.hora);
+            turnos.splice(idx,1);
             localStorage.setItem("turnos", JSON.stringify(turnos));
             mostrarAgenda();
             cargarHorariosDisponibles();

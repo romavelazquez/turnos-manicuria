@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Turnos - Manicurista</title>
-    <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agenda de Turnos - Manicurista</title>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
@@ -14,25 +14,26 @@
     <!-- Botón acceso administrador -->
     <button id="adminButton" class="btn-admin">Acceso Administrador</button>
 
-    <!-- Panel de administración -->
+    <!-- Panel administrativo -->
     <div id="adminPanel" class="admin-panel">
         <h3>Funciones Administrativas</h3>
         <button class="btn-clean" onclick="limpiarTurnos()">Limpiar todos los turnos</button>
-        <h4>Agenda diaria</h4>
+        <h4>Agenda por fecha</h4>
         <div id="agendaDiaria"></div>
     </div>
 
     <h2>Reservar un turno</h2>
-
     <form id="turnoForm" class="turno-form">
         <label for="nombre">Nombre de la clienta:</label>
         <input type="text" id="nombre" name="nombre" required>
 
         <label for="telefono">Teléfono (ej: 249XXXXXXX, 223XXXXXXX, 11XXXXXXX):</label>
-        <input type="tel" id="telefono" name="telefono" 
-               pattern="^(249|223|2281|2284|2244|2297|11)\d{6,8}$" 
-               required
-               placeholder="Característica + número, ej: 2491234567">
+        <input type="tel" id="telefono" name="telefono"
+               pattern="^(249|223|2281|2284|2244|2297|11)\d{6,8}$"
+               required placeholder="Característica + número, ej: 2491234567">
+
+        <label for="fecha">Seleccionar día:</label>
+        <input type="date" id="fecha" name="fecha" required min="<?= new Date().toISOString().split('T')[0] ?>">
 
         <label for="servicio">Servicio:</label>
         <select id="servicio" name="servicio" required>
