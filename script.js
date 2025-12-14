@@ -118,10 +118,12 @@ function cancelarReserva(){
 
 // WhatsApp
 function enviarWhatsApp(reserva){
+    const telefonoCliente = "+54" + reserva.telefono; // agregamos +54 automáticamente
+
     const mensajeCliente = `Hola ${reserva.nombre}, tu turno de ${reserva.servicio} ha sido confirmado a las ${reserva.hora}.`;
     const mensajeManicurista = `Nuevo turno:\nCliente: ${reserva.nombre}\nTel: ${reserva.telefono}\nServicio: ${reserva.servicio}\nHora: ${reserva.hora}`;
 
-    const urlCliente = `https://wa.me/${reserva.telefono.replace('+','')}?text=${encodeURIComponent(mensajeCliente)}`;
+    const urlCliente = `https://wa.me/${telefonoCliente.replace('+','')}?text=${encodeURIComponent(mensajeCliente)}`;
     const urlManicurista = `https://wa.me/${numeroManicurista.replace('+','')}?text=${encodeURIComponent(mensajeManicurista)}`;
 
     window.open(urlCliente, "_blank");

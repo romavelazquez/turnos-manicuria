@@ -28,10 +28,11 @@
         <label for="nombre">Nombre de la clienta:</label>
         <input type="text" id="nombre" name="nombre" required>
 
-        <label for="telefono">Teléfono (ej: +54249XXXXXXX, +54223XXXXXXX):</label>
+        <label for="telefono">Teléfono (ej: 249XXXXXXX, 223XXXXXXX, 11XXXXXXX):</label>
         <input type="tel" id="telefono" name="telefono" 
-               pattern="^\+54(249|223|2281|2284|2244|2297)\d{6,8}$" required
-               placeholder="+54...">
+               pattern="^(249|223|2281|2284|2244|2297|11)\d{6,8}$" 
+               required
+               placeholder="Característica + número, ej: 2491234567">
 
         <label for="servicio">Servicio:</label>
         <select id="servicio" name="servicio" required>
@@ -48,6 +49,7 @@
         <button type="submit" class="btn-submit">Reservar turno</button>
     </form>
 
+    <!-- Pop-up de confirmación -->
     <div id="popup" class="popup">
         <h3>Confirmar Reserva</h3>
         <p id="popupDetails"></p>
