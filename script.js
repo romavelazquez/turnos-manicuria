@@ -9,7 +9,7 @@ const horasBase = [
 const duraciones = {
   tradicional: 60,
   semi: 60,
-  belleza: 60,
+  belleza_pies: 60,
   poligel: 90,
   softgel: 90
 };
