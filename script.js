@@ -1,10 +1,7 @@
 const adminPass = "admin123";
 const telManicurista = "541158428854";
 
-const horasBase = [
-  "9:00","10:00","11:00","12:00",
-  "13:00","14:00","15:00","16:00","17:00"
-];
+const horasBase = ["9:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00"];
 
 const duraciones = {
   tradicional: 60,
@@ -16,11 +13,25 @@ const duraciones = {
   softgel: 90
 };
 
+// ===== ELEMENTOS =====
+const fecha = document.getElementById("fecha");
+const servicio = document.getElementById("servicio");
+const hora = document.getElementById("hora");
+const formTurno = document.getElementById("formTurno");
+const nombre = document.getElementById("nombre");
+const telefono = document.getElementById("telefono");
+
+const adminFechaBloqueo = document.getElementById("adminFechaBloqueo");
+const horariosBloqueo = document.getElementById("horariosBloqueo");
+const adminFechaTurnos = document.getElementById("adminFechaTurnos");
+const listaTurnosAdmin = document.getElementById("listaTurnosAdmin");
+
 // ================= ADMIN LOGIN =================
 document.getElementById("btnAdmin").onclick = () => {
   const pass = prompt("Contraseña administrador");
   if(pass === adminPass){
     document.getElementById("adminPanel").style.display = "block";
+    mostrarCalendarioAdmin();
   } else alert("Contraseña incorrecta");
 };
 
@@ -72,23 +83,40 @@ function guardarBloqueos(){
   alert("Bloqueos guardados");
 }
 
-// ================= TURNOS ADMIN =================
-adminFechaTurnos.addEventListener("change", mostrarTurnosAdmin);
+// ================= CALENDARIO ADMIN =================
+function mostrarCalendarioAdmin(){
+  const calendario = document.getElementById("calendarioAdmin");
+  calendario.innerHTML = "";
 
-function mostrarTurnosAdmin(){
-  const fecha = adminFechaTurnos.value;
+  const hoy = new Date();
+  const mes = hoy.getMonth();
+  const anio = hoy.getFullYear();
+  const diasMes = new Date(anio, mes+1, 0).getDate();
   const turnos = JSON.parse(localStorage.getItem("turnos")) || [];
-  listaTurnosAdmin.innerHTML = "";
 
-  if(!fecha){
-    listaTurnosAdmin.innerHTML = "<p>Seleccione una fecha</p>";
-    return;
+  for(let d=1; d<=diasMes; d++){
+    const fechaStr = `${d.toString().padStart(2,'0')}-${(mes+1).toString().padStart(2,'0')}-${anio}`;
+    const diaDiv = document.createElement("div");
+    diaDiv.className = "dia-calendario";
+
+    const turnosDia = turnos.filter(t => t.fecha === fechaStr);
+    if(turnosDia.length === 1) diaDiv.classList.add("turno");
+    if(turnosDia.length > 1) diaDiv.classList.add("turno-multiples");
+
+    diaDiv.textContent = d;
+    diaDiv.onclick = () => mostrarTurnosPorDia(fechaStr);
+    calendario.appendChild(diaDiv);
   }
+}
 
-  const turnosDia = turnos.filter(t=>t.fecha === fecha);
+function mostrarTurnosPorDia(fecha){
+  const turnos = JSON.parse(localStorage.getItem("turnos")) || [];
+  const lista = document.getElementById("listaTurnosAdmin");
+  lista.innerHTML = `<h4>Turnos del ${fecha}</h4>`;
 
+  const turnosDia = turnos.filter(t => t.fecha === fecha);
   if(turnosDia.length === 0){
-    listaTurnosAdmin.innerHTML = "<p>No hay turnos asignados</p>";
+    lista.innerHTML += "<p>No hay turnos asignados</p>";
     return;
   }
 
@@ -96,21 +124,25 @@ function mostrarTurnosAdmin(){
     const div = document.createElement("div");
     div.className = "turno-admin";
     div.innerHTML = `
-      <strong>${t.hora}</strong><br>
-      ${t.nombre}<br>
-      Servicio: ${t.servicio}
-      <button onclick="cancelarTurno(${i})">Cancelar</button>
+      <strong>${t.hora}</strong> - ${t.nombre} - ${t.servicio}
+      <button onclick="cancelarTurno('${fecha}', ${i})">Cancelar</button>
     `;
-    listaTurnosAdmin.appendChild(div);
+    lista.appendChild(div);
   });
 }
 
-function cancelarTurno(index){
+function cancelarTurno(fecha, index){
   let turnos = JSON.parse(localStorage.getItem("turnos")) || [];
+  const turnosDia = turnos.filter(t=>t.fecha === fecha);
+
   if(confirm("Cancelar turno?")){
-    turnos.splice(index,1);
-    localStorage.setItem("turnos", JSON.stringify(turnos));
-    mostrarTurnosAdmin();
+    const idxGlobal = turnos.findIndex(t => t === turnosDia[index]);
+    if(idxGlobal > -1){
+      turnos.splice(idxGlobal,1);
+      localStorage.setItem("turnos", JSON.stringify(turnos));
+      mostrarCalendarioAdmin();
+      mostrarTurnosPorDia(fecha);
+    }
   }
 }
 
