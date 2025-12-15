@@ -22,26 +22,14 @@ input,select,button{
 }
 
 button{
-  cursor:pointer;
   border:none;
+  cursor:pointer;
   border-radius:4px;
 }
 
-.btn-admin{
-  background:#007bff;
-  color:white;
-}
-
-.btn-danger{
-  background:#dc3545;
-  color:white;
-}
-
-.btn-cerrar{
-  background:#6c757d;
-  color:white;
-  margin-bottom:10px;
-}
+.btn-admin{background:#007bff;color:white;}
+.btn-danger{background:#dc3545;color:white;}
+.btn-cerrar{background:#6c757d;color:white;margin-bottom:10px;}
 
 .admin-panel{
   display:none;
@@ -60,11 +48,9 @@ button{
 .turno-admin button{
   background:#dc3545;
   color:white;
-  margin-top:8px;
+  margin-top:6px;
 }
 
 @media(max-width:600px){
-  .container{
-    padding:10px;
-  }
+  .container{padding:10px}
 }

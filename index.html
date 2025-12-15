@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Agenda Manicuría</title>
-<link rel="stylessheet" href="styles.css">
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
@@ -12,9 +12,10 @@
 
 <h1>Agenda de Turnos</h1>
 
+<!-- BOTÓN ADMIN (ÚNICO VISIBLE) -->
 <button id="btnAdmin" class="btn-admin">Ingresar como administradora</button>
 
-<!-- PANEL ADMIN -->
+<!-- PANEL ADMIN (OCULTO) -->
 <div id="adminPanel" class="admin-panel">
 
 <button class="btn-cerrar" onclick="cerrarSesionAdmin()">Cerrar sesión</button>
@@ -32,7 +33,7 @@
 
 <hr>
 
-<h3>Turnos asignados por día</h3>
+<h3>Turnos asignados</h3>
 <input type="date" id="adminFechaTurnos">
 <div id="listaTurnosAdmin"></div>
 
@@ -40,13 +41,15 @@
 
 <hr>
 
+<!-- CLIENTA -->
 <h2>Reservar turno</h2>
 
 <form id="formTurno">
 
 <input type="text" id="nombre" placeholder="Nombre completo" required>
 
-<input type="tel" id="telefono"
+<input type="tel"
+id="telefono"
 placeholder="Ej: 2491234567"
 pattern="^(249|223|2281|2284|2244|2297|11)\d{6,8}$"
 required>
