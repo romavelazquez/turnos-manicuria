@@ -1,5 +1,5 @@
 body{
-  font-family:Arial;
+  font-family:Arial, sans-serif;
   background:#f2f2f2;
   margin:0;
 }
@@ -24,6 +24,7 @@ input,select,button{
 button{
   cursor:pointer;
   border:none;
+  border-radius:4px;
 }
 
 .btn-admin{
@@ -46,17 +47,24 @@ button{
   display:none;
   background:#eee;
   padding:15px;
+  border-radius:6px;
 }
 
-#listaTurnosAdmin div{
-  background:#fff;
-  padding:8px;
-  margin:5px 0;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+.turno-admin{
+  background:white;
+  padding:10px;
+  margin:8px 0;
+  border-left:4px solid #007bff;
+}
+
+.turno-admin button{
+  background:#dc3545;
+  color:white;
+  margin-top:8px;
 }
 
 @media(max-width:600px){
-  .container{padding:10px}
+  .container{
+    padding:10px;
+  }
 }

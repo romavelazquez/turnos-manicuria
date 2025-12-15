@@ -12,19 +12,21 @@ const duraciones = {
   softgel: 90
 };
 
-// ===== LOGIN ADMIN =====
+// ================= ADMIN LOGIN =================
 document.getElementById("btnAdmin").onclick = () => {
   const pass = prompt("Contraseña administrador");
   if(pass === adminPass){
     document.getElementById("adminPanel").style.display = "block";
-  } else alert("Contraseña incorrecta");
+  } else {
+    alert("Contraseña incorrecta");
+  }
 };
 
 function cerrarSesionAdmin(){
   document.getElementById("adminPanel").style.display = "none";
 }
 
-// ===== LIMPIAR =====
+// ================= LIMPIAR =================
 function limpiarTodo(){
   if(confirm("Eliminar TODOS los turnos y bloqueos?")){
     localStorage.clear();
@@ -32,7 +34,7 @@ function limpiarTodo(){
   }
 }
 
-// ===== BLOQUEAR HORARIOS =====
+// ================= BLOQUEOS =================
 document.getElementById("adminFechaBloqueo")
   .addEventListener("change", mostrarHorariosBloqueo);
 
@@ -40,6 +42,11 @@ function mostrarHorariosBloqueo(){
   const fecha = adminFechaBloqueo.value;
   const bloqueos = JSON.parse(localStorage.getItem("bloqueos")) || {};
   horariosBloqueo.innerHTML = "";
+
+  if(!fecha){
+    horariosBloqueo.innerHTML = "<p>Seleccione una fecha</p>";
+    return;
+  }
 
   horasBase.forEach(h=>{
     const chk = document.createElement("input");
@@ -54,10 +61,15 @@ function mostrarHorariosBloqueo(){
 
 function guardarBloqueos(){
   const fecha = adminFechaBloqueo.value;
+  if(!fecha){
+    alert("Seleccione una fecha");
+    return;
+  }
+
   const checks = horariosBloqueo.querySelectorAll("input");
   let bloqueos = JSON.parse(localStorage.getItem("bloqueos")) || {};
-
   bloqueos[fecha] = [];
+
   checks.forEach(c=>{
     if(c.checked) bloqueos[fecha].push(c.value);
   });
@@ -66,7 +78,7 @@ function guardarBloqueos(){
   alert("Horarios bloqueados guardados");
 }
 
-// ===== VER / CANCELAR TURNOS =====
+// ================= TURNOS ADMIN =================
 document.getElementById("adminFechaTurnos")
   .addEventListener("change", mostrarTurnosAdmin);
 
@@ -75,26 +87,41 @@ function mostrarTurnosAdmin(){
   const turnos = JSON.parse(localStorage.getItem("turnos")) || [];
   listaTurnosAdmin.innerHTML = "";
 
-  turnos
-    .filter(t => t.fecha === fecha)
-    .forEach((t,i)=>{
-      const div = document.createElement("div");
-      div.innerHTML = `
-        ${t.hora} - ${t.nombre}
-        <button onclick="cancelarTurno(${i})">❌</button>
-      `;
-      listaTurnosAdmin.appendChild(div);
-    });
+  if(!fecha){
+    listaTurnosAdmin.innerHTML = "<p>Seleccione una fecha</p>";
+    return;
+  }
+
+  const turnosDia = turnos.filter(t => t.fecha === fecha);
+
+  if(turnosDia.length === 0){
+    listaTurnosAdmin.innerHTML = "<p>No hay turnos asignados para este día.</p>";
+    return;
+  }
+
+  turnosDia.forEach((t,index)=>{
+    const div = document.createElement("div");
+    div.className = "turno-admin";
+    div.innerHTML = `
+      <strong>${t.hora}</strong><br>
+      Cliente: ${t.nombre}<br>
+      Servicio: ${t.servicio}
+      <button onclick="cancelarTurno(${index})">Cancelar</button>
+    `;
+    listaTurnosAdmin.appendChild(div);
+  });
 }
 
 function cancelarTurno(index){
   let turnos = JSON.parse(localStorage.getItem("turnos")) || [];
-  turnos.splice(index,1);
-  localStorage.setItem("turnos", JSON.stringify(turnos));
-  mostrarTurnosAdmin();
+  if(confirm("Cancelar este turno?")){
+    turnos.splice(index,1);
+    localStorage.setItem("turnos", JSON.stringify(turnos));
+    mostrarTurnosAdmin();
+  }
 }
 
-// ===== CLIENTA =====
+// ================= CLIENTA =================
 document.getElementById("fecha").addEventListener("change", cargarHorarios);
 document.getElementById("servicio").addEventListener("change", cargarHorarios);
 
@@ -102,9 +129,10 @@ function cargarHorarios(){
   const fecha = document.getElementById("fecha").value;
   const servicio = document.getElementById("servicio").value;
   const selectHora = document.getElementById("hora");
+
   selectHora.innerHTML = '<option value="">Seleccionar horario</option>';
 
-  if(!fecha || !servicio) return;
+  if(fecha === "" || servicio === "") return;
 
   const turnos = JSON.parse(localStorage.getItem("turnos")) || [];
   const bloqueos = JSON.parse(localStorage.getItem("bloqueos")) || {};
@@ -113,12 +141,8 @@ function cargarHorarios(){
   for(let i=0;i<horasBase.length;i++){
     let libre = true;
 
-    // Bloqueos admin
-    if(bloqueos[fecha]?.includes(horasBase[i])){
-      libre = false;
-    }
+    if(bloqueos[fecha]?.includes(horasBase[i])) libre = false;
 
-    // Turnos existentes
     turnos.forEach(t=>{
       if(t.fecha === fecha){
         const idx = horasBase.indexOf(t.hora);
@@ -127,16 +151,19 @@ function cargarHorarios(){
       }
     });
 
-    // Duración del servicio
     if(i + dur > horasBase.length) libre = false;
 
     if(libre){
       selectHora.add(new Option(horasBase[i], horasBase[i]));
     }
   }
+
+  if(selectHora.options.length === 1){
+    selectHora.add(new Option("No hay horarios disponibles",""));
+  }
 }
 
-// ===== RESERVAR =====
+// ================= RESERVAR =================
 document.getElementById("formTurno").onsubmit = e =>{
   e.preventDefault();
 
@@ -148,7 +175,7 @@ document.getElementById("formTurno").onsubmit = e =>{
     hora: hora.value
   };
 
-  const turnos = JSON.parse(localStorage.getItem("turnos")) || [];
+  let turnos = JSON.parse(localStorage.getItem("turnos")) || [];
   turnos.push(turno);
   localStorage.setItem("turnos", JSON.stringify(turnos));
 
