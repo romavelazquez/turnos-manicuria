@@ -3,14 +3,16 @@ const telManicurista = "541158428854";
 
 const horasBase = [
   "9:00","10:00","11:00","12:00",
-  "13:00","14:00","15:00","16:00"
+  "13:00","14:00","15:00","16:00","17:00"
 ];
 
 const duraciones = {
   tradicional: 60,
   semi: 60,
   belleza_pies: 60,
+  kapping: 60,
   poligel: 90,
+  manos_pies: 120,
   softgel: 90
 };
 
