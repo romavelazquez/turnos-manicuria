@@ -99,22 +99,32 @@ function mostrarCalendarioAdmin(){
     const diaDiv = document.createElement("div");
     diaDiv.className = "dia-calendario";
 
-    const turnosDia = turnos.filter(t => t.fecha === fechaStr);
+    // Marcar si hay turnos
+    const turnosDia = turnos.filter(t => {
+      const tFecha = t.fecha.split('-').reverse().join('-'); // YYYY-MM-DD -> DD-MM-YYYY
+      return tFecha === fechaStr;
+    });
+
     if(turnosDia.length === 1) diaDiv.classList.add("turno");
     if(turnosDia.length > 1) diaDiv.classList.add("turno-multiples");
 
     diaDiv.textContent = d;
-    diaDiv.onclick = () => mostrarTurnosPorDia(fechaStr);
+    diaDiv.onclick = () => mostrarTurnosPorDiaMes(fechaStr); // actualizar función
     calendario.appendChild(diaDiv);
   }
 }
 
-function mostrarTurnosPorDia(fecha){
+
+function mostrarTurnosPorDiaMes(fechaStr){
   const turnos = JSON.parse(localStorage.getItem("turnos")) || [];
   const lista = document.getElementById("listaTurnosAdmin");
-  lista.innerHTML = `<h4>Turnos del ${fecha}</h4>`;
+  lista.innerHTML = `<h4>Turnos del ${fechaStr}</h4>`;
 
-  const turnosDia = turnos.filter(t => t.fecha === fecha);
+  // Convertir fechaStr DD-MM-YYYY -> YYYY-MM-DD para comparar con input
+  const parts = fechaStr.split('-');
+  const fechaISO = `${parts[2]}-${parts[1]}-${parts[0]}`;
+
+  const turnosDia = turnos.filter(t => t.fecha === fechaISO);
   if(turnosDia.length === 0){
     lista.innerHTML += "<p>No hay turnos asignados</p>";
     return;
@@ -125,11 +135,12 @@ function mostrarTurnosPorDia(fecha){
     div.className = "turno-admin";
     div.innerHTML = `
       <strong>${t.hora}</strong> - ${t.nombre} - ${t.servicio}
-      <button onclick="cancelarTurno('${fecha}', ${i})">Cancelar</button>
+      <button onclick="cancelarTurno('${fechaISO}', ${i})">Cancelar</button>
     `;
     lista.appendChild(div);
   });
 }
+
 
 function cancelarTurno(fecha, index){
   let turnos = JSON.parse(localStorage.getItem("turnos")) || [];
@@ -194,6 +205,20 @@ formTurno.onsubmit = e =>{
     servicio: servicio.value,
     hora: hora.value
   };
+  // Pop-up de confirmación
+  const confirmacion = confirm(`Confirma el turno:\n\nCliente: ${turno.nombre}\nFecha: ${turno.fecha}\nHora: ${turno.hora}\nServicio: ${turno.servicio}`);
+  if(!confirmacion) return;
+
+  const turnos = JSON.parse(localStorage.getItem("turnos")) || [];
+  turnos.push(turno);
+  localStorage.setItem("turnos", JSON.stringify(turnos));
+
+  alert("Turno reservado con éxito");
+
+  enviarWhatsApp(turno);
+
+  formTurno.reset();
+};
 
   const turnos = JSON.parse(localStorage.getItem("turnos")) || [];
   turnos.push(turno);
@@ -203,7 +228,6 @@ formTurno.onsubmit = e =>{
 
   alert("Turno reservado");
   e.target.reset();
-};
 
 function enviarWhatsApp(turno){
   const telCliente = "54" + turno.telefono;
