@@ -46,37 +46,23 @@ button.btn-cerrar {
   margin-top: 15px;
 }
 
-/* CALENDARIO ADMIN */
+/* CALENDARIO ADMIN tipo menú desplegable */
 #calendarioAdmin {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr); /* 7 columnas siempre */
+  display: flex;
+  flex-wrap: wrap;
   gap: 5px;
   margin-top: 10px;
-  overflow-x: auto; /* permite scroll horizontal en móviles */
-  padding-bottom: 10px;
 }
 
-/* Encabezado de días (opcional si quieres mostrar L, M, X...) */
-.dia-calendario-header {
-  font-weight: bold;
-  background: #e9ecef;
-  text-align: center;
-  padding: 5px;
-  border-radius: 5px;
-  font-size: 14px;
-}
-
-/* Casillas de días */
 .dia-calendario {
+  flex: 1 0 14%; /* 7 días por fila */
+  min-width: 40px;
   background: #fff;
   border: 1px solid #ccc;
-  cursor: pointer;
-  min-height: 60px;
-  padding: 5px;
-  text-align: center;
   border-radius: 5px;
-  box-sizing: border-box;
-  font-size: 14px;
+  padding: 8px;
+  text-align: center;
+  cursor: pointer;
 }
 
 .dia-calendario.turno {
@@ -101,14 +87,11 @@ button.btn-cerrar {
   margin-left: 5px;
 }
 
-/* Ajustes para móviles */
-@media(max-width: 600px){
-  #calendarioAdmin {
-    grid-template-columns: repeat(7, 1fr);
-  }
-  .dia-calendario, .dia-calendario-header {
-    min-height: 50px;
+/* Ajuste para móviles */
+@media(max-width: 500px){
+  .dia-calendario {
+    flex: 1 0 12%; /* más pequeño para que quepan */
+    padding: 6px;
     font-size: 12px;
-    padding: 3px;
   }
 }
