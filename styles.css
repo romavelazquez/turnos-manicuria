@@ -46,34 +46,36 @@ button.btn-cerrar {
   margin-top: 15px;
 }
 
-/* CALENDARIO ADMIN tipo menú desplegable */
+/* ================= CALENDARIO ================= */
 #calendarioAdmin {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
   gap: 5px;
   margin-top: 10px;
 }
 
 .dia-calendario {
-  flex: 1 0 14%; /* 7 días por fila */
-  min-width: 40px;
   background: #fff;
   border: 1px solid #ccc;
+  padding: 10px;
   border-radius: 5px;
-  padding: 8px;
-  text-align: center;
+  font-size: 14px;
   cursor: pointer;
+  text-align: center;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .dia-calendario.turno {
-  background: #ffc107;
+  background: #ffc107; /* amarillo */
 }
 
 .dia-calendario.turno-multiples {
-  background: #fd7e14;
+  background: #fd7e14; /* naranja */
 }
 
-/* Lista de turnos admin */
 .turno-admin {
   background: #e2e3e5;
   padding: 8px;
@@ -87,11 +89,37 @@ button.btn-cerrar {
   margin-left: 5px;
 }
 
-/* Ajuste para móviles */
-@media(max-width: 500px){
-  .dia-calendario {
-    flex: 1 0 12%; /* más pequeño para que quepan */
-    padding: 6px;
-    font-size: 12px;
+/* ================= FORMULARIOS ================= */
+form input, form select {
+  width: 100%;
+  padding: 8px;
+  margin: 5px 0 10px;
+  box-sizing: border-box;
+}
+
+form button[type="submit"] {
+  width: 100%;
+  background: #28a745;
+  font-weight: bold;
+}
+
+/* ================= SELECTORES MES/AÑO ================= */
+label {
+  margin-right: 5px;
+  font-weight: bold;
+}
+
+#mesSelect, #anioSelect {
+  padding: 5px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 600px) {
+  #calendarioAdmin {
+    grid-template-columns: repeat(2, 1fr); /* 2 columnas en móvil */
   }
 }
