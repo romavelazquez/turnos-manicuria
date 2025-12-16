@@ -1,4 +1,4 @@
-/* ===== GENERAL ===== */
+/* ===== ESTILOS GENERALES ===== */
 body {
   font-family: Arial, sans-serif;
   margin: 0;
@@ -7,7 +7,7 @@ body {
 }
 
 .container {
-  max-width: 800px;
+  max-width: 900px;
   margin: 20px auto;
   padding: 20px;
   background: #fff;
@@ -15,11 +15,12 @@ body {
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
-h1, h2, h3, h4 {
+h1, h2, h3 {
   text-align: center;
   color: #333;
 }
 
+/* ===== BOTONES ===== */
 button {
   cursor: pointer;
   padding: 8px 16px;
@@ -39,6 +40,7 @@ button.btn-cerrar {
   background: #6c757d;
 }
 
+/* ===== PANEL ADMIN ===== */
 .admin-panel {
   display: none;
   background: #f1f1f1;
@@ -48,7 +50,15 @@ button.btn-cerrar {
 }
 
 /* ===== CALENDARIO ===== */
-#calendarioAdmin {
+.calendario-filtros {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.calendario-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 5px;
@@ -66,19 +76,18 @@ button.btn-cerrar {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.2s;
+  transition: background 0.3s, transform 0.2s;
 }
 
 .dia-calendario:hover {
-  background: #e0e0e0;
+  transform: scale(1.05);
 }
 
-/* Los días con turno */
 .dia-calendario.turno {
-  background: #ffc107; /* amarillo */
+  background: #ffc107; /* Amarillo para días con turnos */
 }
 
-/* Lista de turnos en admin */
+/* ===== LISTA DE TURNOS ===== */
 .turno-admin {
   background: #e2e3e5;
   padding: 8px;
@@ -93,32 +102,35 @@ button.btn-cerrar {
 }
 
 /* ===== FORMULARIO CLIENTA ===== */
-form input, form select, form button {
-  display: block;
-  width: 100%;
-  padding: 8px;
-  margin: 10px 0;
+form#formTurno {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+form#formTurno input, 
+form#formTurno select, 
+form#formTurno button {
   font-size: 14px;
+  padding: 8px;
   border-radius: 5px;
   border: 1px solid #ccc;
-  box-sizing: border-box;
 }
 
-/* ===== RESPONSIVE ===== */
-@media (max-width: 600px) {
-  #calendarioAdmin {
-    grid-template-columns: repeat(2, 1fr); /* dos columnas en móvil */
+/* ===== RESPONSIVE MÓVIL ===== */
+@media (max-width: 768px) {
+  .calendario-grid {
+    grid-template-columns: repeat(3, 1fr);
   }
 
-  .dia-calendario {
-    font-size: 12px;
-    padding: 8px;
-    min-height: 50px;
+  .calendario-filtros {
+    flex-direction: column;
+    align-items: center;
   }
 }
 
-@media (max-width: 400px) {
-  #calendarioAdmin {
-    grid-template-columns: repeat(1, 1fr); /* una columna muy pequeña */
+@media (max-width: 480px) {
+  .calendario-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }

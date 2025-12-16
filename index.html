@@ -1,113 +1,69 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agenda Manicuría</title>
-<link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agenda Manicuría</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <div class="container">
+    <h1>Agenda de Turnos</h1>
 
-<div class="container">
+    <!-- BOTÓN ADMIN -->
+    <button id="btnAdmin" class="btn-admin">Ingresar como administradora</button>
 
-<h1>Agenda de Turnos</h1>
+    <!-- PANEL ADMIN -->
+    <div id="adminPanel" class="admin-panel">
+      <button class="btn-cerrar" onclick="cerrarSesionAdmin()">Cerrar sesión</button>
 
-<!-- BOTÓN ADMIN -->
-<button id="btnAdmin" class="btn-admin">Ingresar como administradora</button>
+      <h2>Menú Administrador</h2>
+      <button class="btn-danger" onclick="limpiarTodo()">🧹 Limpiar todos los turnos</button>
 
-<!-- PANEL ADMIN -->
-<div id="adminPanel" class="admin-panel">
+      <hr>
 
-<button class="btn-cerrar" onclick="cerrarSesionAdmin()">Cerrar sesión</button>
+      <h3>Bloquear horarios de un día</h3>
+      <input type="date" id="adminFechaBloqueo">
+      <div id="horariosBloqueo"></div>
+      <button onclick="guardarBloqueos()">Guardar bloqueos</button>
 
-<h2>Menú Administrador</h2>
+      <hr>
 
-<button class="btn-danger" onclick="limpiarTodo()">🧹 Limpiar todos los turnos</button>
+      <h3>Calendario de turnos</h3>
+      <div class="calendario-filtros">
+        <label>Mes: 
+          <select id="mesSelect"></select>
+        </label>
+        <label>Año: 
+          <select id="anioSelect"></select>
+        </label>
+        <button onclick="cargarCalendario()">Actualizar</button>
+      </div>
+      <div id="calendarioAdmin" class="calendario-grid"></div>
+      <div id="listaTurnosAdmin"></div>
+    </div>
 
-<hr>
+    <hr>
 
-<h3>Bloquear horarios de un día</h3>
-<input type="date" id="adminFechaBloqueo">
-<div id="horariosBloqueo"></div>
-<button onclick="guardarBloqueos()">Guardar bloqueos</button>
+    <!-- CLIENTA -->
+    <h2>Reservar turno</h2>
+    <form id="formTurno">
+      <input type="text" id="nombre" placeholder="Nombre completo" required>
 
-<hr>
+      <input type="tel"
+        id="telefono"
+        placeholder="Ej: 2491234567"
+        pattern="^(249|223|2281|2284|2244|2297|11)\d{6,8}$"
+        required>
 
-<h3>Calendario de turnos</h3>
+      <input type="date" id="fecha" required>
 
-<label for="mesSelect">Mes:</label>
-<select id="mesSelect" onchange="cargarCalendario()"></select>
-
-<label for="anioSelect">Año:</label>
-<select id="anioSelect" onchange="cargarCalendario()"></select>
-
-<div id="calendarioAdmin"></div>
-<div id="listaTurnosAdmin"></div>
-
-</div>
-
-<hr>
-
-<!-- CLIENTA -->
-<h2>Reservar turno</h2>
-
-<form id="formTurno">
-
-<input type="text" id="nombre" placeholder="Nombre completo" required>
-
-<input type="tel"
-id="telefono"
-placeholder="Ej: 2491234567"
-pattern="^(249|223|2281|2284|2244|2297|11)\d{6,8}$"
-required>
-
-<input type="date" id="fecha" required>
-
-<select id="servicio" required>
-<option value="">Seleccionar servicio</option>
-<option value="manos_pies">Manos y Pies</option>
-<option value="belleza_pies">Belleza de pies</option>
-<option value="tradicional">Tradicional</option>
-<option value="semi">Semi</option>
-<option value="poligel">Poligel</option>
-<option value="softgel">Softgel</option>
-<option value="kapping">Kapping</option>
-</select>
-
-<select id="hora" required>
-<option value="">Seleccionar horario</option>
-</select>
-
-<button type="submit">Reservar turno</button>
-
-</form>
-
-</div>
-
-<!-- FIREBASE SDK -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyAF_qOMLTEi2RcBSlWrM520_1nrt7m4TiA",
-    authDomain: "turnos-manicuria.firebaseapp.com",
-    projectId: "turnos-manicuria",
-    storageBucket: "turnos-manicuria.firebasestorage.app",
-    messagingSenderId: "254575073746",
-    appId: "1:254575073746:web:adc9a985554cc16b55d00b",
-    measurementId: "G-S9VJ5JTR3X"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  window.db = db; // para que script.js lo pueda usar
-</script>
-
-<!-- SCRIPT PRINCIPAL -->
-<script type="module" src="script.js"></script>
-
-</body>
-</html>
+      <select id="servicio" required>
+        <option value="">Seleccionar servicio</option>
+        <option value="manos_pies">Manos y Pies</option>
+        <option value="belleza_pies">Belleza de pies</option>
+        <option value="tradicional">Tradicional</option>
+        <option value="semi">Semi</option>
+        <option value="poligel">Poligel</option>
+        <option v
 
