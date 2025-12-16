@@ -23,12 +23,31 @@ const telefono = document.getElementById("telefono");
 
 const adminFechaBloqueo = document.getElementById("adminFechaBloqueo");
 const horariosBloqueo = document.getElementById("horariosBloqueo");
-const adminFechaTurnos = document.getElementById("adminFechaTurnos");
 const listaTurnosAdmin = document.getElementById("listaTurnosAdmin");
 
 const adminPanel = document.getElementById("adminPanel");
 const adminMes = document.getElementById("adminMes");
 const adminAnio = document.getElementById("adminAnio");
+
+// ================= NORMALIZAR TURNOS ANTIGUOS =================
+(function normalizarTurnos() {
+  let turnos = JSON.parse(localStorage.getItem("turnos")) || [];
+  let cambiados = false;
+
+  turnos = turnos.map(t => {
+    if(/^\d{2}-\d{2}-\d{4}$/.test(t.fecha)){
+      const partes = t.fecha.split('-');
+      t.fecha = `${partes[2]}-${partes[1]}-${partes[0]}`;
+      cambiados = true;
+    }
+    return t;
+  });
+
+  if(cambiados){
+    localStorage.setItem("turnos", JSON.stringify(turnos));
+    console.log("Turnos antiguos normalizados a formato ISO YYYY-MM-DD");
+  }
+})();
 
 // ================= ADMIN LOGIN =================
 document.getElementById("btnAdmin").onclick = () => {
@@ -88,7 +107,6 @@ function guardarBloqueos(){
 }
 
 // ================= CALENDARIO ADMIN =================
-
 function cargarSelectMesAnio(){
   const hoy = new Date();
   for(let m=0;m<12;m++){
@@ -111,21 +129,30 @@ function cargarSelectMesAnio(){
 function mostrarCalendarioAdmin(){
   const calendario = document.getElementById("calendarioAdmin");
   calendario.innerHTML = "";
+
   const mes = parseInt(adminMes.value);
   const anio = parseInt(adminAnio.value);
 
   const diasMes = new Date(anio, mes+1, 0).getDate();
-  const primerDia = new Date(anio, mes, 1).getDay(); // 0=Domingo
-
+  const primerDia = new Date(anio, mes, 1).getDay();
   const turnos = JSON.parse(localStorage.getItem("turnos")) || [];
 
-  // agregar huecos hasta primer día
+  // Encabezados de días de la semana
+  const diasSemana = ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
+  diasSemana.forEach(d=>{
+    const div = document.createElement("div");
+    div.className="dia-semana";
+    div.textContent=d;
+    calendario.appendChild(div);
+  });
+
+  // Agregar huecos antes del primer día
   for(let i=0;i<primerDia;i++){
     const empty = document.createElement("div");
     calendario.appendChild(empty);
   }
 
-  for(let d=1;d<=diasMes;d++){
+  for(let d=1; d<=diasMes; d++){
     const fechaISO = `${anio}-${String(mes+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     const diaDiv = document.createElement("div");
     diaDiv.className = "dia-calendario";
@@ -136,6 +163,7 @@ function mostrarCalendarioAdmin(){
 
     diaDiv.textContent = d;
     diaDiv.onclick = () => mostrarTurnosPorDiaMes(fechaISO);
+
     calendario.appendChild(diaDiv);
   }
 }
