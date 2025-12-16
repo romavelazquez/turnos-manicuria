@@ -6,7 +6,7 @@ body {
 }
 
 .container {
-  max-width: 900px;
+  max-width: 800px;
   margin: 20px auto;
   padding: 20px;
   background: #fff;
@@ -46,48 +46,37 @@ button.btn-cerrar {
   margin-top: 15px;
 }
 
+/* CALENDARIO ADMIN */
 #calendarioAdmin {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7, 1fr); /* 7 columnas siempre */
   gap: 5px;
   margin-top: 10px;
-  overflow-x: auto; /* Permite hacer scroll horizontal en móviles */
+  overflow-x: auto; /* permite scroll horizontal en móviles */
+  padding-bottom: 10px;
 }
 
-@media(max-width: 700px){
-  #calendarioAdmin {
-    grid-template-columns: repeat(7, 1fr); /* Mantener 7 columnas */
-  }
-}
-
-@media(max-width: 400px){
-  #calendarioAdmin {
-    grid-template-columns: repeat(7, 1fr); /* Mantener 7 columnas */
-    font-size: 12px; /* Reducir tamaño de texto */
-  }
-}
-
-
+/* Encabezado de días (opcional si quieres mostrar L, M, X...) */
 .dia-calendario-header {
   font-weight: bold;
-  text-align: center;
   background: #e9ecef;
-  padding: 5px 0;
+  text-align: center;
+  padding: 5px;
+  border-radius: 5px;
+  font-size: 14px;
 }
 
-.dia-calendario-empty {
-  background: transparent;
-}
-
+/* Casillas de días */
 .dia-calendario {
   background: #fff;
   border: 1px solid #ccc;
-  padding: 10px;
-  border-radius: 5px;
-  font-size: 14px;
   cursor: pointer;
   min-height: 60px;
+  padding: 5px;
   text-align: center;
+  border-radius: 5px;
+  box-sizing: border-box;
+  font-size: 14px;
 }
 
 .dia-calendario.turno {
@@ -98,6 +87,7 @@ button.btn-cerrar {
   background: #fd7e14;
 }
 
+/* Lista de turnos admin */
 .turno-admin {
   background: #e2e3e5;
   padding: 8px;
@@ -111,15 +101,14 @@ button.btn-cerrar {
   margin-left: 5px;
 }
 
-/* Responsive */
-@media(max-width:700px){
+/* Ajustes para móviles */
+@media(max-width: 600px){
   #calendarioAdmin {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(7, 1fr);
   }
-}
-
-@media(max-width:400px){
-  #calendarioAdmin {
-    grid-template-columns: repeat(1, 1fr);
+  .dia-calendario, .dia-calendario-header {
+    min-height: 50px;
+    font-size: 12px;
+    padding: 3px;
   }
 }
