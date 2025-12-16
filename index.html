@@ -34,32 +34,23 @@
 <hr>
 
 <h3>Calendario de turnos</h3>
+<select id="adminMes"></select>
+<select id="adminAnio"></select>
+<button onclick="mostrarCalendarioAdmin()">Mostrar Mes</button>
+
 <div id="calendarioAdmin"></div>
 <div id="listaTurnosAdmin"></div>
 
 </div>
 
 <hr>
-<hr>
-
-<h3>Buscar turnos por día</h3>
-<input type="date" id="adminFechaTurnos">
-<button onclick="buscarTurnosPorFecha()">Buscar</button>
-
 
 <!-- CLIENTA -->
 <h2>Reservar turno</h2>
 
 <form id="formTurno">
-
 <input type="text" id="nombre" placeholder="Nombre completo" required>
-
-<input type="tel"
-id="telefono"
-placeholder="Ej: 2491234567"
-pattern="^(249|223|2281|2284|2244|2297|11)\d{6,8}$"
-required>
-
+<input type="tel" id="telefono" placeholder="Ej: 2491234567" pattern="^(249|223|2281|2284|2244|2297|11)\d{6,8}$" required>
 <input type="date" id="fecha" required>
 
 <select id="servicio" required>
@@ -78,7 +69,6 @@ required>
 </select>
 
 <button type="submit">Reservar turno</button>
-
 </form>
 
 </div>
