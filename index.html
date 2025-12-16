@@ -9,7 +9,6 @@
 <body>
 
 <div class="container">
-
   <h1>Agenda de Turnos</h1>
 
   <!-- BOTÓN ADMIN -->
@@ -17,11 +16,9 @@
 
   <!-- PANEL ADMIN -->
   <div id="adminPanel" class="admin-panel">
-
     <button class="btn-cerrar" onclick="cerrarSesionAdmin()">Cerrar sesión</button>
 
     <h2>Menú Administrador</h2>
-
     <button class="btn-danger" onclick="limpiarTodo()">🧹 Limpiar todos los turnos</button>
 
     <hr>
@@ -34,34 +31,21 @@
     <hr>
 
     <h3>Calendario de turnos</h3>
-    <div class="selector-mes-anio">
-      <label for="mesSelect">Mes:</label>
-      <select id="mesSelect"></select>
-      <label for="anioSelect">Año:</label>
-      <select id="anioSelect"></select>
-    </div>
+    <select id="mesSelect"></select>
+    <select id="anioSelect"></select>
+    <button onclick="cargarCalendario()">Ver calendario</button>
     <div id="calendarioAdmin"></div>
     <div id="listaTurnosAdmin"></div>
-
   </div>
 
   <hr>
 
   <!-- CLIENTA -->
   <h2>Reservar turno</h2>
-
   <form id="formTurno">
-
     <input type="text" id="nombre" placeholder="Nombre completo" required>
-
-    <input type="tel"
-      id="telefono"
-      placeholder="Ej: 2491234567"
-      pattern="^(249|223|2281|2284|2244|2297|11)\d{6,8}$"
-      required>
-
+    <input type="tel" id="telefono" placeholder="Ej: 2491234567" pattern="^(249|223|2281|2284|2244|2297|11)\d{6,8}$" required>
     <input type="date" id="fecha" required>
-
     <select id="servicio" required>
       <option value="">Seleccionar servicio</option>
       <option value="manos_pies">Manos y Pies</option>
@@ -72,17 +56,40 @@
       <option value="softgel">Softgel</option>
       <option value="kapping">Kapping</option>
     </select>
-
     <select id="hora" required>
       <option value="">Seleccionar horario</option>
     </select>
-
     <button type="submit">Reservar turno</button>
-
   </form>
-
 </div>
 
-<script src="script.js"></script>
+<!-- Firebase -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAF_qOMLTEi2RcBSlWrM520_1nrt7m4TiA",
+    authDomain: "turnos-manicuria.firebaseapp.com",
+    projectId: "turnos-manicuria",
+    storageBucket: "turnos-manicuria.firebasestorage.app",
+    messagingSenderId: "254575073746",
+    appId: "1:254575073746:web:adc9a985554cc16b55d00b",
+    measurementId: "G-S9VJ5JTR3X"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  window.db = db;
+  window.collection = collection;
+  window.addDoc = addDoc;
+  window.getDocs = getDocs;
+  window.deleteDoc = deleteDoc;
+  window.doc = doc;
+</script>
+
+<script type="module" src="script.js"></script>
 </body>
 </html>
+
