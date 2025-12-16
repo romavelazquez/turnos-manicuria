@@ -1,4 +1,3 @@
-/* ===== ESTILOS GENERALES ===== */
 body {
   font-family: Arial, sans-serif;
   margin: 0;
@@ -15,12 +14,8 @@ body {
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
-h1, h2, h3 {
-  text-align: center;
-  color: #333;
-}
+h1,h2,h3 { text-align: center; color: #333; }
 
-/* ===== BOTONES ===== */
 button {
   cursor: pointer;
   padding: 8px 16px;
@@ -32,15 +27,9 @@ button {
   font-size: 14px;
 }
 
-button.btn-danger {
-  background: #dc3545;
-}
+button.btn-danger { background: #dc3545; }
+button.btn-cerrar { background: #6c757d; }
 
-button.btn-cerrar {
-  background: #6c757d;
-}
-
-/* ===== PANEL ADMIN ===== */
 .admin-panel {
   display: none;
   background: #f1f1f1;
@@ -49,13 +38,12 @@ button.btn-cerrar {
   margin-top: 15px;
 }
 
-/* ===== CALENDARIO ===== */
 .calendario-filtros {
   display: flex;
   justify-content: center;
   gap: 10px;
-  margin-bottom: 10px;
   flex-wrap: wrap;
+  margin-bottom: 10px;
 }
 
 .calendario-grid {
@@ -76,18 +64,13 @@ button.btn-cerrar {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.3s, transform 0.2s;
+  transition: 0.2s;
 }
 
-.dia-calendario:hover {
-  transform: scale(1.05);
-}
+.dia-calendario:hover { transform: scale(1.05); }
 
-.dia-calendario.turno {
-  background: #ffc107; /* Amarillo para días con turnos */
-}
+.dia-calendario.turno { background: #ffc107; }
 
-/* ===== LISTA DE TURNOS ===== */
 .turno-admin {
   background: #e2e3e5;
   padding: 8px;
@@ -96,41 +79,13 @@ button.btn-cerrar {
   font-size: 13px;
 }
 
-.turno-admin button {
-  background: #dc3545;
-  margin-left: 5px;
+.turno-admin button { background: #dc3545; margin-left: 5px; }
+
+form#formTurno { display: flex; flex-direction: column; gap: 10px; }
+
+form#formTurno input, form#formTurno select, form#formTurno button {
+  font-size: 14px; padding: 8px; border-radius: 5px; border: 1px solid #ccc;
 }
 
-/* ===== FORMULARIO CLIENTA ===== */
-form#formTurno {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-form#formTurno input, 
-form#formTurno select, 
-form#formTurno button {
-  font-size: 14px;
-  padding: 8px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-}
-
-/* ===== RESPONSIVE MÓVIL ===== */
-@media (max-width: 768px) {
-  .calendario-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  .calendario-filtros {
-    flex-direction: column;
-    align-items: center;
-  }
-}
-
-@media (max-width: 480px) {
-  .calendario-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
+@media(max-width:768px) { .calendario-grid { grid-template-columns: repeat(3,1fr); } }
+@media(max-width:480px) { .calendario-grid { grid-template-columns: repeat(2,1fr); } }

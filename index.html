@@ -10,10 +10,8 @@
   <div class="container">
     <h1>Agenda de Turnos</h1>
 
-    <!-- BOTÓN ADMIN -->
     <button id="btnAdmin" class="btn-admin">Ingresar como administradora</button>
 
-    <!-- PANEL ADMIN -->
     <div id="adminPanel" class="admin-panel">
       <button class="btn-cerrar" onclick="cerrarSesionAdmin()">Cerrar sesión</button>
 
@@ -45,19 +43,15 @@
 
     <hr>
 
-    <!-- CLIENTA -->
     <h2>Reservar turno</h2>
     <form id="formTurno">
       <input type="text" id="nombre" placeholder="Nombre completo" required>
-
       <input type="tel"
-        id="telefono"
-        placeholder="Ej: 2491234567"
-        pattern="^(249|223|2281|2284|2244|2297|11)\d{6,8}$"
-        required>
-
+             id="telefono"
+             placeholder="Ej: 2491234567"
+             pattern="^(249|223|2281|2284|2244|2297|11)\d{6,8}$"
+             required>
       <input type="date" id="fecha" required>
-
       <select id="servicio" required>
         <option value="">Seleccionar servicio</option>
         <option value="manos_pies">Manos y Pies</option>
@@ -65,5 +59,43 @@
         <option value="tradicional">Tradicional</option>
         <option value="semi">Semi</option>
         <option value="poligel">Poligel</option>
-        <option v
+        <option value="softgel">Softgel</option>
+        <option value="kapping">Kapping</option>
+      </select>
+      <select id="hora" required>
+        <option value="">Seleccionar horario</option>
+      </select>
+      <button type="submit">Reservar turno</button>
+    </form>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "TU_API_KEY",
+      authDomain: "TU_AUTH_DOMAIN",
+      projectId: "TU_PROJECT_ID",
+      storageBucket: "TU_STORAGE_BUCKET",
+      messagingSenderId: "TU_MESSAGING_SENDER_ID",
+      appId: "TU_APP_ID",
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    window.db = db; 
+    window.collection = collection;
+    window.addDoc = addDoc;
+    window.getDocs = getDocs;
+    window.doc = doc;
+    window.deleteDoc = deleteDoc;
+    window.setDoc = setDoc;
+  </script>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>
 
