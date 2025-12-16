@@ -53,37 +53,34 @@ button.btn-cerrar {
   margin-top: 10px;
 }
 
-#calendarioAdmin .dia-semana {
+.dia-calendario-header {
   font-weight: bold;
   text-align: center;
+  background: #e9ecef;
   padding: 5px 0;
-  background: #007bff;
-  color: white;
-  border-radius: 3px;
-  font-size: 12px;
 }
 
-#calendarioAdmin .dia-calendario {
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 10px;
-  min-height: 60px;
+.dia-calendario-empty {
+  background: transparent;
+}
+
+.dia-calendario {
   background: #fff;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
   font-size: 14px;
+  cursor: pointer;
+  min-height: 60px;
+  text-align: center;
 }
 
-#calendarioAdmin .dia-calendario.turno {
+.dia-calendario.turno {
   background: #ffc107;
 }
 
-#calendarioAdmin .dia-calendario.turno-multiples {
+.dia-calendario.turno-multiples {
   background: #fd7e14;
-  color: white;
 }
 
 .turno-admin {
@@ -92,9 +89,6 @@ button.btn-cerrar {
   margin: 5px 0;
   border-radius: 5px;
   font-size: 13px;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
 }
 
 .turno-admin button {
@@ -102,15 +96,15 @@ button.btn-cerrar {
   margin-left: 5px;
 }
 
-@media(max-width:600px){
-  #calendarioAdmin .dia-calendario{
-    padding: 6px;
-    font-size: 12px;
-    min-height: 50px;
+/* Responsive */
+@media(max-width:700px){
+  #calendarioAdmin {
+    grid-template-columns: repeat(2, 1fr);
   }
+}
 
-  #calendarioAdmin .dia-semana{
-    font-size: 10px;
-    padding: 3px 0;
+@media(max-width:400px){
+  #calendarioAdmin {
+    grid-template-columns: repeat(1, 1fr);
   }
 }
