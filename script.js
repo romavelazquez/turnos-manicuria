@@ -1,7 +1,7 @@
 const adminPass = "admin123";
 const telManicurista = "541158428854";
 
-const horasBase = ["9:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00"];
+const horasBase = ["9:00","10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","20:30"];
 
 const duraciones = {
   tradicional: 60,
@@ -84,7 +84,7 @@ function guardarBloqueos(){
 }
 
 // ================= CALENDARIO ADMIN =================
-function mostrarCalendarioAdmin(){
+/*function mostrarCalendarioAdmin(){
   const calendario = document.getElementById("calendarioAdmin");
   calendario.innerHTML = "";
 
@@ -139,6 +139,105 @@ function mostrarTurnosPorDiaMes(fechaStr){
     `;
     lista.appendChild(div);
   });
+}*/
+function mostrarCalendarioAdmin(){
+  const calendario = document.getElementById("calendarioAdmin");
+  calendario.innerHTML = "";
+
+  const hoy = new Date();
+  const bloqueos = JSON.parse(localStorage.getItem("bloqueos")) || {};
+  const turnos = JSON.parse(localStorage.getItem("turnos")) || [];
+
+  for(let m = 0; m < 2; m++){
+    const fechaMes = new Date(hoy.getFullYear(), hoy.getMonth() + m, 1);
+    const mes = fechaMes.getMonth();
+    const anio = fechaMes.getFullYear();
+    const diasMes = new Date(anio, mes + 1, 0).getDate();
+
+    const titulo = document.createElement("h4");
+    titulo.textContent = fechaMes.toLocaleString("es-AR", { month: "long", year: "numeric" });
+    calendario.appendChild(titulo);
+
+    const dias = ["L","M","M","J","V","S","D"];
+    const nombres = document.createElement("div");
+    nombres.className = "nombres-dias";
+    dias.forEach(d => {
+      const div = document.createElement("div");
+      div.textContent = d;
+      nombres.appendChild(div);
+    });
+    calendario.appendChild(nombres);
+
+    const grid = document.createElement("div");
+    grid.className = "grid-mes";
+
+    let inicio = new Date(anio, mes, 1).getDay();
+    inicio = inicio === 0 ? 6 : inicio - 1;
+
+    for(let i = 0; i < inicio; i++){
+      grid.appendChild(document.createElement("div"));
+    }
+
+    for(let d = 1; d <= diasMes; d++){
+      const diaDiv = document.createElement("div");
+      diaDiv.className = "dia-calendario";
+      diaDiv.textContent = d;
+
+      const fechaISO = `${anio}-${(mes+1).toString().padStart(2,'0')}-${d.toString().padStart(2,'0')}`;
+      const fechaVisual = `${d.toString().padStart(2,'0')}-${(mes+1).toString().padStart(2,'0')}-${anio}`;
+
+      if(fechaISO === hoy.toISOString().split("T")[0]){
+        diaDiv.classList.add("hoy");
+      }
+
+      const turnosDia = turnos.filter(t => {
+        const tFecha = t.fecha.split('-').reverse().join('-');
+        return tFecha === fechaVisual;
+      });
+
+      if(turnosDia.length === 1) diaDiv.classList.add("turno");
+      if(turnosDia.length > 1) diaDiv.classList.add("turno-multiples");
+
+      if(bloqueos[fechaISO]?.length){
+        diaDiv.classList.add("bloqueado");
+      }
+
+      diaDiv.onclick = () => mostrarTurnosPorDiaMes(fechaVisual);
+      grid.appendChild(diaDiv);
+    }
+
+    calendario.appendChild(grid);
+  }
+}
+function mostrarTurnosPorDiaMes(fechaStr){
+  const turnos = JSON.parse(localStorage.getItem("turnos")) || [];
+  const lista = document.getElementById("listaTurnosAdmin");
+  lista.innerHTML = `<h4>Agenda del ${fechaStr}</h4>`;
+
+  const parts = fechaStr.split('-');
+  const fechaISO = `${parts[2]}-${parts[1]}-${parts[0]}`;
+
+  const turnosDia = turnos.filter(t => t.fecha === fechaISO);
+
+  if(turnosDia.length === 0){
+    lista.innerHTML += "<p>No hay turnos asignados</p>";
+    return;
+  }
+
+  turnosDia
+    .sort((a,b) => horasBase.indexOf(a.hora) - horasBase.indexOf(b.hora))
+    .forEach((t,i) => {
+      const div = document.createElement("div");
+      div.className = "turno-admin";
+      div.innerHTML = `
+        <strong>⏰ ${t.hora}</strong>
+        <span>💅 ${t.servicio}</span>
+        <span>👤 ${t.nombre}</span>
+        <span>📞 ${t.telefono}</span>
+        <button onclick="cancelarTurno('${fechaISO}', ${i})">Cancelar</button>
+      `;
+      lista.appendChild(div);
+    });
 }
 
 
