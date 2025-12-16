@@ -26,11 +26,16 @@ const horariosBloqueo = document.getElementById("horariosBloqueo");
 const listaTurnosAdmin = document.getElementById("listaTurnosAdmin");
 const calendario = document.getElementById("calendarioAdmin");
 
+const mesSelect = document.getElementById("mesSelect");
+const anioSelect = document.getElementById("anioSelect");
+const meses = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+
 // ================= ADMIN LOGIN =================
 document.getElementById("btnAdmin").onclick = () => {
   const pass = prompt("Contraseña administrador");
   if(pass === adminPass){
     document.getElementById("adminPanel").style.display = "block";
+    cargarSelectMesAnio();
     mostrarCalendarioAdmin();
   } else alert("Contraseña incorrecta");
 };
@@ -84,11 +89,34 @@ function guardarBloqueos(){
 }
 
 // ================= CALENDARIO ADMIN =================
+function cargarSelectMesAnio(){
+  const hoy = new Date();
+  mesSelect.innerHTML = "";
+  meses.forEach((m,i)=>{
+    const opt = document.createElement("option");
+    opt.value = i;
+    opt.textContent = m;
+    if(i === hoy.getMonth()) opt.selected = true;
+    mesSelect.appendChild(opt);
+  });
+
+  anioSelect.innerHTML = "";
+  for(let y=hoy.getFullYear()-1; y<=hoy.getFullYear()+2; y++){
+    const opt = document.createElement("option");
+    opt.value = y;
+    opt.textContent = y;
+    if(y === hoy.getFullYear()) opt.selected = true;
+    anioSelect.appendChild(opt);
+  }
+
+  mesSelect.addEventListener("change", ()=> mostrarCalendarioAdmin());
+  anioSelect.addEventListener("change", ()=> mostrarCalendarioAdmin());
+}
+
 function mostrarCalendarioAdmin() {
   calendario.innerHTML = "";
-  const hoy = new Date();
-  const mes = hoy.getMonth();
-  const anio = hoy.getFullYear();
+  const mes = parseInt(mesSelect.value);
+  const anio = parseInt(anioSelect.value);
   const diasMes = new Date(anio, mes + 1, 0).getDate();
   const turnos = JSON.parse(localStorage.getItem("turnos")) || [];
 
