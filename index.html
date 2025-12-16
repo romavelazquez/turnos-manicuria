@@ -10,76 +10,70 @@
 
 <div class="container">
 
-<h1>Agenda de Turnos</h1>
+  <h1>Agenda de Turnos</h1>
 
-<!-- BOTÓN ADMIN -->
-<button id="btnAdmin" class="btn-admin">Ingresar como administradora</button>
+  <!-- BOTÓN ADMIN -->
+  <button id="btnAdmin" class="btn-admin">Ingresar como administradora</button>
 
-<!-- PANEL ADMIN -->
-<div id="adminPanel" class="admin-panel">
+  <!-- PANEL ADMIN -->
+  <div id="adminPanel" class="admin-panel">
 
-<button class="btn-cerrar" onclick="cerrarSesionAdmin()">Cerrar sesión</button>
+    <button class="btn-cerrar" onclick="cerrarSesionAdmin()">Cerrar sesión</button>
 
-<h2>Menú Administrador</h2>
+    <h2>Menú Administrador</h2>
 
-<button class="btn-danger" onclick="limpiarTodo()">🧹 Limpiar todos los turnos</button>
+    <button class="btn-danger" onclick="limpiarTodo()">🧹 Limpiar todos los turnos</button>
 
-<hr>
+    <hr>
 
-<h3>Bloquear horarios de un día</h3>
-<input type="date" id="adminFechaBloqueo">
-<div id="horariosBloqueo"></div>
-<button onclick="guardarBloqueos()">Guardar bloqueos</button>
+    <h3>Bloquear horarios de un día</h3>
+    <input type="date" id="adminFechaBloqueo">
+    <div id="horariosBloqueo"></div>
+    <button onclick="guardarBloqueos()">Guardar bloqueos</button>
 
-<hr>
+    <hr>
 
-<h3>Calendario de turnos</h3>
-<label for="mesSelect">Mes:</label>
-<select id="mesSelect"></select>
+    <h3>Calendario de turnos</h3>
+    <div id="calendarioAdmin"></div>
+    <div id="listaTurnosAdmin"></div>
 
-<label for="anioSelect">Año:</label>
-<select id="anioSelect"></select>
+  </div>
 
-<div id="calendarioAdmin"></div>
-<div id="listaTurnosAdmin"></div>
+  <hr>
 
-</div>
+  <!-- CLIENTA -->
+  <h2>Reservar turno</h2>
 
-<hr>
+  <form id="formTurno">
 
-<!-- CLIENTA -->
-<h2>Reservar turno</h2>
+    <input type="text" id="nombre" placeholder="Nombre completo" required>
 
-<form id="formTurno">
+    <input type="tel"
+      id="telefono"
+      placeholder="Ej: 2491234567"
+      pattern="^(249|223|2281|2284|2244|2297|11)\d{6,8}$"
+      required>
 
-<input type="text" id="nombre" placeholder="Nombre completo" required>
+    <input type="date" id="fecha" required>
 
-<input type="tel"
-id="telefono"
-placeholder="Ej: 2491234567"
-pattern="^(249|223|2281|2284|2244|2297|11)\d{6,8}$"
-required>
+    <select id="servicio" required>
+      <option value="">Seleccionar servicio</option>
+      <option value="manos_pies">Manos y Pies</option>
+      <option value="belleza_pies">Belleza de pies</option>
+      <option value="tradicional">Tradicional</option>
+      <option value="semi">Semi</option>
+      <option value="poligel">Poligel</option>
+      <option value="softgel">Softgel</option>
+      <option value="kapping">Kapping</option>
+    </select>
 
-<input type="date" id="fecha" required>
+    <select id="hora" required>
+      <option value="">Seleccionar horario</option>
+    </select>
 
-<select id="servicio" required>
-<option value="">Seleccionar servicio</option>
-<option value="manos_pies">Manos y Pies</option>
-<option value="belleza_pies">Belleza de pies</option>
-<option value="tradicional">Tradicional</option>
-<option value="semi">Semi</option>
-<option value="poligel">Poligel</option>
-<option value="softgel">Softgel</option>
-<option value="kapping">Kapping</option>
-</select>
+    <button type="submit">Reservar turno</button>
 
-<select id="hora" required>
-<option value="">Seleccionar horario</option>
-</select>
-
-<button type="submit">Reservar turno</button>
-
-</form>
+  </form>
 
 </div>
 

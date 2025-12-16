@@ -21,27 +21,24 @@ const formTurno = document.getElementById("formTurno");
 const nombre = document.getElementById("nombre");
 const telefono = document.getElementById("telefono");
 
+const adminPanel = document.getElementById("adminPanel");
 const adminFechaBloqueo = document.getElementById("adminFechaBloqueo");
 const horariosBloqueo = document.getElementById("horariosBloqueo");
-const listaTurnosAdmin = document.getElementById("listaTurnosAdmin");
 const calendario = document.getElementById("calendarioAdmin");
-
-const mesSelect = document.getElementById("mesSelect");
-const anioSelect = document.getElementById("anioSelect");
-const meses = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+const listaTurnosAdmin = document.getElementById("listaTurnosAdmin");
 
 // ================= ADMIN LOGIN =================
 document.getElementById("btnAdmin").onclick = () => {
   const pass = prompt("Contraseña administrador");
   if(pass === adminPass){
-    document.getElementById("adminPanel").style.display = "block";
+    adminPanel.style.display = "block";
     cargarSelectMesAnio();
     mostrarCalendarioAdmin();
   } else alert("Contraseña incorrecta");
 };
 
 function cerrarSesionAdmin(){
-  document.getElementById("adminPanel").style.display = "none";
+  adminPanel.style.display = "none";
 }
 
 // ================= LIMPIAR =================
@@ -56,11 +53,11 @@ function limpiarTodo(){
 adminFechaBloqueo.addEventListener("change", mostrarHorariosBloqueo);
 
 function mostrarHorariosBloqueo(){
-  const fecha = adminFechaBloqueo.value;
+  const f = adminFechaBloqueo.value;
   const bloqueos = JSON.parse(localStorage.getItem("bloqueos")) || {};
   horariosBloqueo.innerHTML = "";
 
-  if(!fecha){
+  if(!f){
     horariosBloqueo.innerHTML = "<p>Seleccione una fecha</p>";
     return;
   }
@@ -69,26 +66,31 @@ function mostrarHorariosBloqueo(){
     const chk = document.createElement("input");
     chk.type = "checkbox";
     chk.value = h;
-    chk.checked = bloqueos[fecha]?.includes(h) || false;
+    chk.checked = bloqueos[f]?.includes(h) || false;
     horariosBloqueo.append(chk, document.createTextNode(" "+h), document.createElement("br"));
   });
 }
 
 function guardarBloqueos(){
-  const fecha = adminFechaBloqueo.value;
-  if(!fecha) return alert("Seleccione una fecha");
+  const f = adminFechaBloqueo.value;
+  if(!f) return alert("Seleccione una fecha");
 
   const checks = horariosBloqueo.querySelectorAll("input");
   let bloqueos = JSON.parse(localStorage.getItem("bloqueos")) || {};
-  bloqueos[fecha] = [];
+  bloqueos[f] = [];
+  checks.forEach(c=>{ if(c.checked) bloqueos[f].push(c.value); });
 
-  checks.forEach(c=>{ if(c.checked) bloqueos[fecha].push(c.value); });
   localStorage.setItem("bloqueos", JSON.stringify(bloqueos));
-
   alert("Bloqueos guardados");
 }
 
-// ================= CALENDARIO ADMIN =================
+// ================= CALENDARIO =================
+const meses = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+const mesSelect = document.createElement("select");
+const anioSelect = document.createElement("select");
+adminPanel.insertBefore(mesSelect, calendario);
+adminPanel.insertBefore(anioSelect, calendario);
+
 function cargarSelectMesAnio(){
   const hoy = new Date();
   mesSelect.innerHTML = "";
@@ -109,49 +111,48 @@ function cargarSelectMesAnio(){
     anioSelect.appendChild(opt);
   }
 
-  mesSelect.addEventListener("change", ()=> mostrarCalendarioAdmin());
-  anioSelect.addEventListener("change", ()=> mostrarCalendarioAdmin());
+  mesSelect.addEventListener("change", mostrarCalendarioAdmin);
+  anioSelect.addEventListener("change", mostrarCalendarioAdmin);
 }
 
-function mostrarCalendarioAdmin() {
+function mostrarCalendarioAdmin(){
   calendario.innerHTML = "";
   const mes = parseInt(mesSelect.value);
   const anio = parseInt(anioSelect.value);
-  const diasMes = new Date(anio, mes + 1, 0).getDate();
+  const diasMes = new Date(anio, mes+1, 0).getDate();
   const turnos = JSON.parse(localStorage.getItem("turnos")) || [];
 
-  for (let d = 1; d <= diasMes; d++) {
-    const fechaISO = `${anio}-${(mes + 1).toString().padStart(2,'0')}-${d.toString().padStart(2,'0')}`;
+  for(let d=1; d<=diasMes; d++){
+    const fechaStr = `${anio}-${(mes+1).toString().padStart(2,'0')}-${d.toString().padStart(2,'0')}`;
     const diaDiv = document.createElement("div");
     diaDiv.className = "dia-calendario";
 
-    const turnosDia = turnos.filter(t => t.fecha === fechaISO);
-    if (turnosDia.length === 1) diaDiv.classList.add("turno");
-    if (turnosDia.length > 1) diaDiv.classList.add("turno-multiples");
+    const turnosDia = turnos.filter(t => t.fecha === fechaStr);
 
-    diaDiv.textContent = d.toString().padStart(2,'0');
-    diaDiv.onclick = () => mostrarTurnosPorDia(fechaISO);
+    if(turnosDia.length === 1) diaDiv.classList.add("turno");
+    if(turnosDia.length > 1) diaDiv.classList.add("turno-multiples");
+
+    diaDiv.textContent = d;
+    diaDiv.onclick = () => mostrarTurnosPorDia(fechaStr);
     calendario.appendChild(diaDiv);
   }
 }
 
-function mostrarTurnosPorDia(fechaISO) {
+function mostrarTurnosPorDia(fecha){
   const turnos = JSON.parse(localStorage.getItem("turnos")) || [];
-  listaTurnosAdmin.innerHTML = `<h4>Turnos del ${fechaISO}</h4>`;
+  listaTurnosAdmin.innerHTML = `<h4>Turnos del ${fecha}</h4>`;
 
-  const turnosDia = turnos.filter(t => t.fecha === fechaISO);
-  if (turnosDia.length === 0) {
+  const turnosDia = turnos.filter(t => t.fecha === fecha);
+  if(turnosDia.length === 0){
     listaTurnosAdmin.innerHTML += "<p>No hay turnos asignados</p>";
     return;
   }
 
-  turnosDia.forEach((t,i) => {
+  turnosDia.forEach((t,i)=>{
     const div = document.createElement("div");
     div.className = "turno-admin";
-    div.innerHTML = `
-      <strong>${t.hora}</strong> - ${t.nombre} - ${t.servicio}
-      <button onclick="cancelarTurno('${fechaISO}', ${i})">Cancelar</button>
-    `;
+    div.innerHTML = `<strong>${t.hora}</strong> - ${t.nombre} - ${t.servicio}
+                     <button onclick="cancelarTurno('${fecha}', ${i})">Cancelar</button>`;
     listaTurnosAdmin.appendChild(div);
   });
 }
@@ -183,7 +184,7 @@ function cargarHorarios(){
 
   const turnos = JSON.parse(localStorage.getItem("turnos")) || [];
   const bloqueos = JSON.parse(localStorage.getItem("bloqueos")) || {};
-  const dur = duraciones[s] / 60;
+  const dur = duraciones[s]/60;
 
   for(let i=0;i<horasBase.length;i++){
     let libre = true;
@@ -193,7 +194,7 @@ function cargarHorarios(){
     turnos.forEach(t=>{
       if(t.fecha === f){
         const idx = horasBase.indexOf(t.hora);
-        const d = duraciones[t.servicio] / 60;
+        const d = duraciones[t.servicio]/60;
         if(i >= idx && i < idx + d) libre = false;
       }
     });
@@ -237,22 +238,15 @@ formTurno.onsubmit = e =>{
 function enviarWhatsApp(turno){
   const telCliente = "54" + turno.telefono;
 
-  const msgCliente =
-`Hola ${turno.nombre} 😊
-Tu turno fue reservado:
-
-📅 ${turno.fecha}
-⏰ ${turno.hora}
-💅 ${turno.servicio}`;
-
-  const msgAdmin =
-`📌 Nuevo turno
-Cliente: ${turno.nombre}
-Tel: ${turno.telefono}
-Fecha: ${turno.fecha}
-Hora: ${turno.hora}
-Servicio: ${turno.servicio}`;
+  const msgCliente = `Hola ${turno.nombre} 😊\nTu turno fue reservado:\n📅 ${turno.fecha}\n⏰ ${turno.hora}\n💅 ${turno.servicio}`;
+  const msgAdmin = `📌 Nuevo turno\nCliente: ${turno.nombre}\nTel: ${turno.telefono}\nFecha: ${turno.fecha}\nHora: ${turno.hora}\nServicio: ${turno.servicio}`;
 
   window.open(`https://wa.me/${telCliente}?text=${encodeURIComponent(msgCliente)}`, "_blank");
   window.open(`https://wa.me/${telManicurista}?text=${encodeURIComponent(msgAdmin)}`, "_blank");
 }
+
+// ================= INICIALIZACIÓN =================
+document.addEventListener("DOMContentLoaded", () => {
+  cargarSelectMesAnio();
+  mostrarCalendarioAdmin();
+});
