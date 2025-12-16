@@ -158,10 +158,9 @@ function mostrarCalendarioAdmin(){
     titulo.textContent = fechaMes.toLocaleString("es-AR", { month: "long", year: "numeric" });
     calendario.appendChild(titulo);
 
-    const dias = ["L","M","M","J","V","S","D"];
     const nombres = document.createElement("div");
     nombres.className = "nombres-dias";
-    dias.forEach(d => {
+    ["L","M","M","J","V","S","D"].forEach(d => {
       const div = document.createElement("div");
       div.textContent = d;
       nombres.appendChild(div);
@@ -209,6 +208,7 @@ function mostrarCalendarioAdmin(){
     calendario.appendChild(grid);
   }
 }
+
 function mostrarTurnosPorDiaMes(fechaStr){
   const turnos = JSON.parse(localStorage.getItem("turnos")) || [];
   const lista = document.getElementById("listaTurnosAdmin");
