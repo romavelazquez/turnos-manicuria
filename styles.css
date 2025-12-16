@@ -51,7 +51,22 @@ button.btn-cerrar {
   grid-template-columns: repeat(7, 1fr);
   gap: 5px;
   margin-top: 10px;
+  overflow-x: auto; /* Permite hacer scroll horizontal en móviles */
 }
+
+@media(max-width: 700px){
+  #calendarioAdmin {
+    grid-template-columns: repeat(7, 1fr); /* Mantener 7 columnas */
+  }
+}
+
+@media(max-width: 400px){
+  #calendarioAdmin {
+    grid-template-columns: repeat(7, 1fr); /* Mantener 7 columnas */
+    font-size: 12px; /* Reducir tamaño de texto */
+  }
+}
+
 
 .dia-calendario-header {
   font-weight: bold;
