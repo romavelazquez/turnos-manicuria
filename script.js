@@ -111,30 +111,27 @@ function mostrarCalendarioAdmin(){
   const turnos = JSON.parse(localStorage.getItem("turnos")) || [];
 
   for(let d=1; d<=diasMes; d++){
-    const fechaStr = `${d.toString().padStart(2,'0')}-${(mes+1).toString().padStart(2,'0')}-${anio}`;
     const diaDiv = document.createElement("div");
     diaDiv.className = "dia-calendario";
 
-    const turnosDia = turnos.filter(t => {
-      const parts = t.fecha.split("-");
-      const tFechaStr = `${parts[2]}-${parts[1]}-${parts[0]}`;
-      return t.fecha === t.fecha || t.fecha === t.fecha;
-    });
+    // Formatear fecha en YYYY-MM-DD
+    const fechaISO = `${anio}-${(mes+1).toString().padStart(2,'0')}-${d.toString().padStart(2,'0')}`;
+
+    // Revisar turnos del día
+    const turnosDia = turnos.filter(t => t.fecha === fechaISO);
 
     if(turnosDia.length === 1) diaDiv.classList.add("turno");
     if(turnosDia.length > 1) diaDiv.classList.add("turno-multiples");
 
     diaDiv.textContent = d;
-    diaDiv.onclick = () => mostrarTurnosPorDiaMes(`${d.toString().padStart(2,'0')}-${(mes+1).toString().padStart(2,'0')}-${anio}`);
+    diaDiv.onclick = () => mostrarTurnosPorDiaMes(fechaISO);
     calendario.appendChild(diaDiv);
   }
 }
 
-function mostrarTurnosPorDiaMes(fechaStr){
+function mostrarTurnosPorDiaMes(fechaISO){
   const turnos = JSON.parse(localStorage.getItem("turnos")) || [];
-  listaTurnosAdmin.innerHTML = `<h4>Turnos del ${fechaStr}</h4>`;
-  const parts = fechaStr.split('-');
-  const fechaISO = `${parts[2]}-${parts[1]}-${parts[0]}`;
+  listaTurnosAdmin.innerHTML = `<h4>Turnos del ${fechaISO}</h4>`;
   const turnosDia = turnos.filter(t => t.fecha === fechaISO);
   if(turnosDia.length === 0){
     listaTurnosAdmin.innerHTML += "<p>No hay turnos asignados</p>";
@@ -211,6 +208,7 @@ formTurno.onsubmit = e =>{
   turnos.push(turno);
   localStorage.setItem("turnos", JSON.stringify(turnos));
   alert("Turno reservado con éxito");
+  mostrarCalendarioAdmin(); // Actualiza visual inmediatamente
   enviarWhatsApp(turno);
   formTurno.reset();
 };
