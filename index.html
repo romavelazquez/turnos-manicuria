@@ -2,100 +2,88 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Agenda Manicuría</title>
+  <title>Turnos</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+
   <div class="container">
-    <h1>Agenda de Turnos</h1>
 
-    <button id="btnAdmin" class="btn-admin">Ingresar como administradora</button>
+    <!-- ================= CLIENTE ================= -->
+    <h1 class="titulo">Reservar turno 💅</h1>
 
-    <div id="adminPanel" class="admin-panel">
-      <button class="btn-cerrar" onclick="cerrarSesionAdmin()">Cerrar sesión</button>
+    <div class="card">
+      <label class="label">Nombre</label>
+      <input type="text" id="nombre" class="input">
 
-      <h2>Menú Administrador</h2>
-      <button class="btn-danger" onclick="limpiarTodo()">🧹 Limpiar todos los turnos</button>
+      <label class="label">Teléfono (solo números)</label>
+      <input type="tel" id="telefono" class="input" placeholder="Ej: 2494123456">
 
-      <hr>
+      <label class="label">Fecha</label>
+      <input type="date" id="fecha" class="input">
 
-      <h3>Bloquear horarios de un día</h3>
-      <input type="date" id="adminFechaBloqueo">
-      <div id="horariosBloqueo"></div>
-      <button onclick="guardarBloqueos()">Guardar bloqueos</button>
-
-      <hr>
-
-      <h3>Calendario de turnos</h3>
-      <div class="calendario-filtros">
-        <label>Mes: 
-          <select id="mesSelect"></select>
-        </label>
-        <label>Año: 
-          <select id="anioSelect"></select>
-        </label>
-        <button onclick="cargarCalendario()">Actualizar</button>
-      </div>
-      <div id="calendarioAdmin" class="calendario-grid"></div>
-      <div id="listaTurnosAdmin"></div>
-    </div>
-
-    <hr>
-
-    <h2>Reservar turno</h2>
-    <form id="formTurno">
-      <input type="text" id="nombre" placeholder="Nombre completo" required>
-      <input type="tel"
-             id="telefono"
-             placeholder="Ej: 2491234567"
-             pattern="^(249|223|2281|2284|2244|2297|11)\d{6,8}$"
-             required>
-      <input type="date" id="fecha" required>
-      <select id="servicio" required>
+      <label class="label">Servicio</label>
+      <select id="servicio">
         <option value="">Seleccionar servicio</option>
-        <option value="manos_pies">Manos y Pies</option>
-        <option value="belleza_pies">Belleza de pies</option>
-        <option value="tradicional">Tradicional</option>
-        <option value="semi">Semi</option>
-        <option value="poligel">Poligel</option>
-        <option value="softgel">Softgel</option>
-        <option value="kapping">Kapping</option>
+        <option value="60">Servicio básico (60 min)</option>
+        <option value="90">Servicio completo (90 min)</option>
+        <option value="120">Servicio premium (120 min)</option>
       </select>
-      <select id="hora" required>
+
+      <label class="label">Horario</label>
+      <select id="hora">
         <option value="">Seleccionar horario</option>
       </select>
-      <button type="submit">Reservar turno</button>
-    </form>
+
+      <button id="btnReservar" class="btn btn-primary">
+        Reservar turno
+      </button>
+    </div>
+
+    <div class="card">
+      <h2>Turnos del día</h2>
+      <div id="listaTurnos" class="lista"></div>
+    </div>
+
+    <!-- ================= ADMIN ================= -->
+    <button id="btnAdmin" class="btn btn-admin">
+      Administradora
+    </button>
+
+    <div id="adminPanel" class="admin-panel">
+
+      <h2>Panel administradora</h2>
+
+      <div class="card">
+        <label class="label">Ver turnos por fecha</label>
+        <input type="date" id="adminFechaTurnos" class="input">
+        <div id="adminListaTurnos" class="lista"></div>
+      </div>
+
+      <div class="card">
+        <label class="label">Bloquear / liberar horarios</label>
+        <input type="date" id="adminFechaBloqueo" class="input">
+        <div id="adminBloqueos" class="bloqueos"></div>
+
+        <button id="guardarBloqueos" class="btn btn-primary">
+          Guardar bloqueos
+        </button>
+      </div>
+
+      <div class="card">
+        <button id="btnLimpiarReservas" class="btn btn-danger">
+          Limpiar todas las reservas
+        </button>
+
+        <button id="cerrarAdmin" class="btn btn-secondary">
+          Cerrar sesión
+        </button>
+      </div>
+
+    </div>
+
   </div>
-
-  <!-- Firebase SDK -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "TU_API_KEY",
-      authDomain: "TU_AUTH_DOMAIN",
-      projectId: "TU_PROJECT_ID",
-      storageBucket: "TU_STORAGE_BUCKET",
-      messagingSenderId: "TU_MESSAGING_SENDER_ID",
-      appId: "TU_APP_ID",
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    window.db = db; 
-    window.collection = collection;
-    window.addDoc = addDoc;
-    window.getDocs = getDocs;
-    window.doc = doc;
-    window.deleteDoc = deleteDoc;
-    window.setDoc = setDoc;
-  </script>
 
   <script type="module" src="script.js"></script>
 </body>
 </html>
-
