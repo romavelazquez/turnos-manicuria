@@ -83,10 +83,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   ========================== */
 
   async function cargarBloqueos() {
-    bloqueos = [];
-    const snap = await getDocs(collection(db, "bloqueos"));
-    snap.forEach(d => bloques.push({ id: d.id, ...d.data() }));
-  }
+  bloqueos = [];
+  const snap = await getDocs(collection(db, "bloqueos"));
+  snap.forEach(d => bloqueos.push({ id: d.id, ...d.data() }));  // ✔ BIEN
+}
+
 
   /* ==========================
       CARGAR SERVICIOS
@@ -206,6 +207,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       `https://wa.me/549${ADMIN_PHONE}?text=${encodeURIComponent(msg)}`,
       "_blank"
     );
+    const msgCliente = `Hola ${nombre.value}! Tu turno de ${nombreServicio} quedó reservado para el día ${fecha.value} a las ${hora.value}. 💅`;
+
+window.open(
+  `https://wa.me/549${telefono.value.replace(/\D/g,"")}?text=${encodeURIComponent(msgCliente)}`,
+  "_blank"
+);
+
 
     limpiarFormulario();
     mostrarTurnosHoy();
