@@ -1,0 +1,388 @@
+import { db } from "./firebase.js";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  deleteDoc,
+  doc,
+  getDoc,
+  setDoc
+} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* ===== CONFIG ===== */
+  const ADMIN_PASS = "admin123";
+  const ADMIN_PHONE = "1158428854";
+
+  /* ===== SERVICIOS ===== */
+  const SERVICIOS = [
+    { nombre: "Tradicional", duracion: 60 },
+    { nombre: "Semi", duracion: 60 },
+    { nombre: "Pies", duracion: 60 },
+    { nombre: "Retiro de Servicio", duracion: 60 },
+    { nombre: "Soft Gel", duracion: 90 },
+    { nombre: "Poli Gel", duracion: 90 },
+    { nombre: "Manos y Pies", duracion: 120 }
+  ];
+
+  const horasBase = [
+    "09:00","09:30","10:00","10:30","11:00","11:30",
+    "12:00","12:30","13:00","13:30",
+    "14:00","14:30","15:00","15:30","16:00","16:30","17:00"
+  ];
+
+  /* ===== ELEMENTOS ===== */
+  const nombre = document.getElementById("nombre");
+  const telefono = document.getElementById("telefono");
+  const fecha = document.getElementById("fecha");
+  const servicio = document.getElementById("servicio");
+  const hora = document.getElementById("hora");
+  const btnReservar = document.getElementById("btnReservar");
+  const listaTurnos = document.getElementById("listaTurnos");
+
+  const btnAdmin = document.getElementById("btnAdmin");
+  const adminPanel = document.getElementById("adminPanel");
+  const adminFechaTurnos = document.getElementById("adminFechaTurnos");
+  const adminListaTurnos = document.getElementById("adminListaTurnos");
+  const adminFechaBloqueo = document.getElementById("adminFechaBloqueo");
+  const adminBloqueos = document.getElementById("adminBloqueos");
+  const guardarBloqueosBtn = document.getElementById("guardarBloqueos");
+  const cerrarAdmin = document.getElementById("cerrarAdmin");
+  const bloqueoDiaCompleto = document.getElementById("bloqueoDiaCompleto");
+  const btnLimpiarReservas = document.getElementById("btnLimpiarReservas");
+
+  let turnos = [];
+
+  /* ===== UTIL ===== */
+  function horaAMinutos(h) {
+    const [hh, mm] = h.split(":").map(Number);
+    return hh * 60 + mm;
+  }
+
+  async function cargarTurnos() {
+    turnos = [];
+    const snap = await getDocs(collection(db, "turnos"));
+    snap.forEach(d => turnos.push({ id: d.id, ...d.data() }));
+  }
+
+  function corregirTelefono(raw) {
+    let tel = raw.replace(/\D/g, "");
+    if (tel.startsWith("0")) tel = tel.slice(1);
+    tel = tel.replace(/^(11|223|2262|249|2926|2281|2282|2244)15/, "$1");
+    tel = tel.replace(/^(223|2262|249|2926|2281|2282|2244)154/, "$1");
+    if (tel.startsWith("01115")) tel = "11" + tel.slice(5);
+    if (tel.startsWith("011")) tel = "11" + tel.slice(3);
+    if (tel.startsWith("15") && tel.length <= 10) tel = tel.slice(2);
+    return tel;
+  }
+
+  function limpiarFormulario() {
+    nombre.value = "";
+    telefono.value = "";
+    fecha.value = "";
+    servicio.value = "";
+    hora.innerHTML = '<option value="">Seleccionar horario</option>';
+  }
+
+  /* ===== CARGAR SERVICIOS ===== */
+  servicio.innerHTML = '<option value="">Seleccionar servicio</option>';
+  SERVICIOS.forEach(s => {
+    const op = document.createElement("option");
+    op.value = s.nombre;
+    op.textContent = `${s.nombre} (${s.duracion} min)`;
+    op.dataset.duracion = s.duracion;
+    servicio.appendChild(op);
+  });
+
+  /* ===== TURNOS DEL DÍA ===== */
+  async function mostrarTurnosHoy() {
+    listaTurnos.innerHTML = "";
+    const hoy = new Date().toISOString().split("T")[0];
+
+    await cargarTurnos();
+
+    const turnosHoy = turnos
+      .filter(t => t.fecha === hoy)
+      .sort((a, b) => horaAMinutos(a.hora) - horaAMinutos(b.hora));
+
+    if (turnosHoy.length === 0) {
+      listaTurnos.innerHTML = `<div class="agenda-vacio">No hay turnos para hoy</div>`;
+      return;
+    }
+
+    turnosHoy.forEach(t => {
+      const item = document.createElement("div");
+      item.className =
+        "agenda-item servicio-" + t.servicio.replace(/ /g, "\\ ");
+      item.innerHTML = `
+        <div class="agenda-hora">${t.hora}</div>
+        <div class="agenda-servicio">${t.servicio}</div>
+      `;
+      listaTurnos.appendChild(item);
+    });
+  }
+
+  /* ===== CARGAR HORARIOS DISPONIBLES ===== */
+  async function cargarHorarios() {
+    hora.innerHTML = '<option value="">Seleccionar horario</option>';
+    if (!fecha.value || !servicio.value) return;
+
+    const ref = doc(db, "bloqueos", fecha.value);
+    const snap = await getDoc(ref);
+
+    let bloqueadoTodo = false;
+    let bloqueados = [];
+
+    if (snap.exists()) {
+      bloqueadoTodo = snap.data().diaCompleto || false;
+      bloqueados = snap.data().horas || [];
+    }
+
+    if (bloqueadoTodo) {
+      hora.innerHTML = '<option value="">Día bloqueado</option>';
+      return;
+    }
+
+    await cargarTurnos();
+
+    const op = servicio.selectedOptions[0];
+    const duracion = Number(op.dataset.duracion);
+    const cierre = horaAMinutos("17:30");
+
+    horasBase.forEach(h => {
+      const inicio = horaAMinutos(h);
+      const fin = inicio + duracion;
+      let libre = fin <= cierre && !bloqueados.includes(h);
+
+      turnos.forEach(t => {
+        if (t.fecha === fecha.value) {
+          const ti = horaAMinutos(t.hora);
+          const tf = ti + t.duracion;
+          if (inicio < tf && fin > ti) libre = false;
+        }
+      });
+
+      if (libre) hora.add(new Option(h, h));
+    });
+
+    if (hora.options.length === 1) {
+      hora.add(new Option("No hay horarios disponibles", ""));
+    }
+  }
+
+  fecha.addEventListener("change", cargarHorarios);
+  servicio.addEventListener("change", cargarHorarios);
+
+  /* ===== RESERVAR ===== */
+  btnReservar.addEventListener("click", async () => {
+    const tel = corregirTelefono(telefono.value);
+
+    if (tel.length < 10 || tel.length > 11) {
+      alert("Número inválido. Revise que no incluya 0 ni 15.");
+      return;
+    }
+
+    if (!nombre.value || !fecha.value || !servicio.value || !hora.value) {
+      alert("Complete todos los campos.");
+      return;
+    }
+
+    const nombreServ = servicio.value;
+    const duracion = Number(servicio.selectedOptions[0].dataset.duracion);
+
+    await addDoc(collection(db, "turnos"), {
+      nombre: nombre.value,
+      telefono: tel,
+      fecha: fecha.value,
+      hora: hora.value,
+      servicio: nombreServ,
+      duracion: duracion
+    });
+
+    const msgCli = `
+Hola ${nombre.value}! 👋
+Tu turno fue reservado 💅
+
+📌 ${nombreServ}
+📅 ${fecha.value}
+⏰ ${hora.value}
+    `;
+
+    const msgAdmin = `
+📢 NUEVO TURNO
+
+👤 ${nombre.value}
+📞 ${tel}
+📌 ${nombreServ}
+📅 ${fecha.value}
+⏰ ${hora.value}
+    `;
+
+    window.open(`https://wa.me/549${tel}?text=${encodeURIComponent(msgCli)}`, "_blank");
+    window.open(`https://wa.me/549${ADMIN_PHONE}?text=${encodeURIComponent(msgAdmin)}`, "_blank");
+
+    alert("Turno reservado correctamente");
+
+    limpiarFormulario();
+    mostrarTurnosHoy();
+  });
+
+  /* ===== ADMIN LOGIN ===== */
+  btnAdmin.addEventListener("click", () => {
+    const pass = prompt("Ingrese contraseña de administradora");
+
+    if (pass === ADMIN_PASS) {
+      adminPanel.style.display = "block";
+      document.body.classList.add("admin-mode");
+    } else {
+      alert("Contraseña incorrecta");
+    }
+  });
+
+  cerrarAdmin.addEventListener("click", () => {
+    adminPanel.style.display = "none";
+    document.body.classList.remove("admin-mode");
+  });
+
+  /* ===== ADMIN: VER TURNOS POR FECHA ===== */
+  adminFechaTurnos.addEventListener("change", async () => {
+    adminListaTurnos.innerHTML = "";
+    await cargarTurnos();
+
+    const lista = turnos
+      .filter(t => t.fecha === adminFechaTurnos.value)
+      .sort((a, b) => horaAMinutos(a.hora) - horaAMinutos(b.hora));
+
+    if (lista.length === 0) {
+      adminListaTurnos.innerHTML = `<div class="agenda-vacio">No hay turnos</div>`;
+      return;
+    }
+
+    lista.forEach(t => {
+      const div = document.createElement("div");
+      div.className = "agenda-item servicio-" + t.servicio.replace(/ /g, "\\ ");
+
+      div.innerHTML = `
+        <div class="agenda-hora">${t.hora}</div>
+        <div class="agenda-servicio">${t.servicio}</div>
+        <div class="agenda-nombre">👤 ${t.nombre}</div>
+        <div class="agenda-telefono">📞 ${t.telefono}</div>
+        <button class="btn-cancelar">Cancelar</button>
+      `;
+
+      div.querySelector(".btn-cancelar").onclick = async () => {
+        await deleteDoc(doc(db, "turnos", t.id));
+        adminFechaTurnos.dispatchEvent(new Event("change"));
+        mostrarTurnosHoy();
+      };
+
+      adminListaTurnos.appendChild(div);
+    });
+  });
+
+  /* ===== ADMIN: BLOQUEOS ===== */
+  adminFechaBloqueo.addEventListener("change", async () => {
+    adminBloqueos.innerHTML = "";
+
+    const ref = doc(db, "bloqueos", adminFechaBloqueo.value);
+    const snap = await getDoc(ref);
+
+    let diaCompleto = false;
+    let bloqueados = [];
+
+    if (snap.exists()) {
+      diaCompleto = snap.data().diaCompleto || false;
+      bloqueados = snap.data().horas || [];
+    }
+
+    bloqueoDiaCompleto.checked = diaCompleto;
+
+    horasBase.forEach(h => {
+      const chk = document.createElement("input");
+      chk.type = "checkbox";
+      chk.value = h;
+      chk.checked = bloqueados.includes(h);
+      chk.disabled = diaCompleto;
+      adminBloqueos.append(chk, " " + h, document.createElement("br"));
+    });
+  });
+
+  guardarBloqueosBtn.addEventListener("click", async () => {
+    const diaCompleto = bloqueoDiaCompleto.checked;
+    let horas = [];
+
+    if (!diaCompleto) {
+      horas = [...adminBloqueos.querySelectorAll("input:checked")].map(c => c.value);
+    }
+
+    await setDoc(doc(db, "bloqueos", adminFechaBloqueo.value), {
+      diaCompleto: diaCompleto,
+      horas: horas
+    });
+
+    alert("Bloqueos guardados");
+    cargarHorarios();
+  });
+
+  /* ===== ADMIN: ELIMINAR TODAS LAS RESERVAS ===== */
+  btnLimpiarReservas.addEventListener("click", async () => {
+    if (!confirm("¿Eliminar TODOS los turnos?")) return;
+
+    const snap = await getDocs(collection(db, "turnos"));
+    for (const d of snap.docs) {
+      await deleteDoc(doc(db, "turnos", d.id));
+    }
+
+    alert("Reservas eliminadas");
+    mostrarTurnosHoy();
+  });
+
+  /* ===== ENVÍO AUTOMÁTICO FIN DE JORNADA ===== */
+  async function envioAutomaticoFinDeJornada() {
+    const ahora = new Date();
+    const hoyFecha = ahora.toISOString().split("T")[0];
+
+    const cierreH = 18;
+    const cierreM = 0;
+
+    if (ahora.getHours() < cierreH ||
+       (ahora.getHours() === cierreH && ahora.getMinutes() < cierreM)) return;
+
+    const ultimo = localStorage.getItem("envioFinDeJornada");
+    if (ultimo === hoyFecha) return;
+
+    await cargarTurnos();
+
+    const man = new Date();
+    man.setDate(man.getDate() + 1);
+    const manana = man.toISOString().split("T")[0];
+
+    const lista = turnos
+      .filter(t => t.fecha === manana)
+      .sort((a, b) => horaAMinutos(a.hora) - horaAMinutos(b.hora));
+
+    if (lista.length === 0) {
+      localStorage.setItem("envioFinDeJornada", hoyFecha);
+      return;
+    }
+
+    let msg = `📢 *Turnos de mañana*\n📅 ${manana}\n\n`;
+    lista.forEach(t => {
+      msg += `⏰ ${t.hora} - ${t.servicio} - ${t.nombre}\n`;
+    });
+
+    window.open(
+      `https://wa.me/549${ADMIN_PHONE}?text=${encodeURIComponent(msg)}`,
+      "_blank"
+    );
+
+    localStorage.setItem("envioFinDeJornada", hoyFecha);
+  }
+
+  envioAutomaticoFinDeJornada();
+
+  /* ===== INIT ===== */
+  mostrarTurnosHoy();
+
+});

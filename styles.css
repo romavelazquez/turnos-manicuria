@@ -1,143 +1,170 @@
 :root {
-  --rosa: #e91e63;
-  --rosa-hover: #d81b60;
-  --gris: #f5f5f5;
-  --oscuro: #333;
-  --borde: #ddd;
-  --peligro: #d32f2f;
-  --peligro-hover: #b71c1c;
+  --rosa: #ff7bbd;
+  --rosa-hover: #ff54a9;
+  --violeta: #8b4dff;
+  --violeta-hover: #6d38d3;
+  --peligro: #d9534f;
+  --peligro-hover: #c9302c;
+  --fondo: #f8f4f8;
+  --tarjeta: #ffffff;
 }
 
-* {
-  box-sizing: border-box;
-  font-family: "Segoe UI", system-ui, sans-serif;
-}
-
+/* ===== GENERAL ===== */
 body {
+  font-family: Arial;
+  background: var(--fondo);
   margin: 0;
-  background: var(--gris);
   padding: 20px;
+  color: #333;
+  transition: background 0.4s ease;
 }
 
 .container {
-  max-width: 420px;
+  max-width: 450px;
   margin: auto;
-}
-
-.titulo {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-/* ===== CARDS ===== */
-.card {
-  background: white;
-  padding: 18px;
-  margin-bottom: 20px;
+  background: var(--tarjeta);
+  padding: 20px;
   border-radius: 14px;
-  box-shadow: 0 4px 12px rgba(0,0,0,.08);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
 }
 
-/* ===== FORM ===== */
-.label {
+h2 {
+  text-align: center;
+  color: var(--rosa);
+  margin-bottom: 20px;
+}
+
+label {
+  font-weight: bold;
   display: block;
-  margin-top: 14px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--oscuro);
+  margin-top: 15px;
+  margin-bottom: 5px;
 }
 
-.input, select {
+input, select {
   width: 100%;
-  margin-top: 6px;
-  padding: 10px 12px;
-  border-radius: 10px;
-  border: 1px solid var(--borde);
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
   font-size: 15px;
 }
 
-.input:focus, select:focus {
-  outline: none;
-  border-color: var(--rosa);
-  box-shadow: 0 0 0 2px rgba(233,30,99,.15);
-}
-
-/* ===== BOTONES ===== */
-.btn {
+button {
   width: 100%;
-  margin-top: 18px;
-  padding: 12px;
-  font-size: 16px;
-  border-radius: 12px;
-  border: none;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.btn-primary {
   background: var(--rosa);
   color: white;
+  padding: 10px;
+  border: none;
+  font-size: 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 20px;
 }
-
-.btn-primary:hover {
+button:hover {
   background: var(--rosa-hover);
 }
 
-.btn-admin {
-  background: var(--oscuro);
-  color: white;
-}
-
-.btn-admin:hover {
-  opacity: .9;
-}
-
+/* ===== BOTÓN ROJO ===== */
 .btn-danger {
-  background: var(--peligro);
-  color: white;
+  background: var(--peligro) !important;
+}
+.btn-danger:hover {
+  background: var(--peligro-hover) !important;
 }
 
-.btn-danger:hover {
+/* ===== AGENDA ===== */
+.agenda-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: var(--tarjeta);
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  margin-bottom: 10px;
+  border-left: 6px solid var(--rosa);
+}
+
+.agenda-hora {
+  font-size: 18px;
+  font-weight: bold;
+  width: 70px;
+  color: var(--rosa);
+}
+
+.agenda-servicio {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.agenda-nombre, .agenda-telefono {
+  font-size: 14px;
+  color: #555;
+}
+
+/* VACÍO */
+.agenda-vacio {
+  text-align: center;
+  padding: 12px;
+  background: var(--tarjeta);
+  border-radius: 12px;
+  border-left: 6px solid #bbb;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+
+/* ===== COLORES POR SERVICIO ===== */
+.servicio-Tradicional { border-left-color: #f1f43b !important; }
+.servicio-Semi { border-left-color: #2c9611 !important; }
+.servicio-Pies { border-left-color: #08b7c4 !important; }
+.servicio-Retiro\\ de\\ Servicio { border-left-color: #1136ef !important; }
+.servicio-Soft\\ Gel { border-left-color: #271292 !important; }
+.servicio-Poli\\ Gel { border-left-color: #911591 !important; }
+.servicio-Manos\\ y\\ Pies { border-left-color: #ed9b49 !important; }
+
+/* ===== BOTÓN CANCELAR TURNO ===== */
+.btn-cancelar {
+  margin-left: auto;
+  background: var(--peligro);
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.btn-cancelar:hover {
   background: var(--peligro-hover);
 }
 
-.btn-secondary {
-  background: #aaa;
-  color: white;
-}
-
-/* ===== LISTAS ===== */
-.lista div {
-  padding: 8px;
-  border-bottom: 1px dashed #eee;
-  font-size: 14px;
-}
-
-/* ===== ADMIN ===== */
-.admin-panel {
+/* ===== ADMIN PANEL ===== */
+#adminPanel {
   display: none;
-  background: #fff3f6;
-  border: 2px solid var(--rosa);
-  padding: 18px;
-  border-radius: 14px;
+  background: var(--tarjeta);
+  padding: 20px;
+  border-radius: 12px;
+  border: 2px solid var(--violeta);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-.admin-panel h2 {
+#adminPanel h2 {
+  color: var(--violeta);
+}
+
+.admin-section-title {
+  color: var(--violeta);
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 20px;
   text-align: center;
 }
 
-.bloqueos {
-  margin-top: 10px;
-  font-size: 14px;
+#cerrarAdmin {
+  background: var(--violeta);
+}
+#cerrarAdmin:hover {
+  background: var(--violeta-hover);
 }
 
-.bloqueos input {
-  margin-right: 6px;
+/* ===== FONDO MODO ADMIN ===== */
+.admin-mode {
+  background: #f0e8ff !important;
 }
 
-/* ===== RESPONSIVE ===== */
-@media (max-width: 480px) {
-  body {
-    padding: 10px;
-  }
-}

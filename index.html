@@ -2,88 +2,77 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Turnos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Turnos Manicuría</title>
   <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
 
   <div class="container">
+    <h2>Reservar Turno</h2>
 
-    <!-- ================= CLIENTE ================= -->
-    <h1 class="titulo">Reservar turno 💅</h1>
+    <label>Nombre</label>
+    <input type="text" id="nombre" placeholder="Tu nombre">
 
-    <div class="card">
-      <label class="label">Nombre</label>
-      <input type="text" id="nombre" class="input">
+    <label>Teléfono</label>
+    <input type="text" id="telefono" placeholder="Ej: 2262 412345">
 
-      <label class="label">Teléfono (solo números)</label>
-      <input type="tel" id="telefono" class="input" placeholder="Ej: 2494123456">
+    <label>Fecha</label>
+    <input type="date" id="fecha">
 
-      <label class="label">Fecha</label>
-      <input type="date" id="fecha" class="input">
+    <label>Servicio</label>
+    <select id="servicio">
+      <option value="">Seleccionar servicio</option>
+    </select>
 
-      <label class="label">Servicio</label>
-      <select id="servicio">
-        <option value="">Seleccionar servicio</option>
-        <option value="60">Servicio básico (60 min)</option>
-        <option value="90">Servicio completo (90 min)</option>
-        <option value="120">Servicio premium (120 min)</option>
-      </select>
+    <label>Horario</label>
+    <select id="hora">
+      <option value="">Seleccionar horario</option>
+    </select>
 
-      <label class="label">Horario</label>
-      <select id="hora">
-        <option value="">Seleccionar horario</option>
-      </select>
+    <button id="btnReservar">Reservar</button>
 
-      <button id="btnReservar" class="btn btn-primary">
-        Reservar turno
-      </button>
-    </div>
+    <hr>
 
-    <div class="card">
-      <h2>Turnos del día</h2>
-      <div id="listaTurnos" class="lista"></div>
-    </div>
+    <h2>Turnos del día</h2>
+    <div id="listaTurnos"></div>
 
-    <!-- ================= ADMIN ================= -->
-    <button id="btnAdmin" class="btn btn-admin">
-      Administradora
-    </button>
-
-    <div id="adminPanel" class="admin-panel">
-
-      <h2>Panel administradora</h2>
-
-      <div class="card">
-        <label class="label">Ver turnos por fecha</label>
-        <input type="date" id="adminFechaTurnos" class="input">
-        <div id="adminListaTurnos" class="lista"></div>
-      </div>
-
-      <div class="card">
-        <label class="label">Bloquear / liberar horarios</label>
-        <input type="date" id="adminFechaBloqueo" class="input">
-        <div id="adminBloqueos" class="bloqueos"></div>
-
-        <button id="guardarBloqueos" class="btn btn-primary">
-          Guardar bloqueos
-        </button>
-      </div>
-
-      <div class="card">
-        <button id="btnLimpiarReservas" class="btn btn-danger">
-          Limpiar todas las reservas
-        </button>
-
-        <button id="cerrarAdmin" class="btn btn-secondary">
-          Cerrar sesión
-        </button>
-      </div>
-
-    </div>
-
+    <button id="btnAdmin" style="margin-top:25px;">Administradora</button>
   </div>
 
+  <!-- PANEL ADMINISTRADORA -->
+  <div id="adminPanel" class="container">
+
+    <h2>Panel Administradora</h2>
+
+    <!-- Ver turnos -->
+    <div class="admin-section-title">Ver Turnos por Fecha</div>
+    <input type="date" id="adminFechaTurnos">
+    <div id="adminListaTurnos" style="margin-top:15px;"></div>
+
+    <hr>
+
+    <!-- Bloqueos -->
+    <div class="admin-section-title">Bloquear Horarios</div>
+    <input type="date" id="adminFechaBloqueo">
+
+    <label style="margin-top:15px; display:block;">
+      <input type="checkbox" id="bloqueoDiaCompleto"> Bloquear día completo
+    </label>
+
+    <div id="adminBloqueos" style="margin-top:10px;"></div>
+    <button id="guardarBloqueos">Guardar Bloqueos</button>
+
+    <hr>
+
+    <button id="btnLimpiarReservas" style="background:#d9534f;">Eliminar Todas las Reservas</button>
+
+    <button id="cerrarAdmin" style="margin-top:25px;">Cerrar Panel</button>
+  </div>
+
+  <script type="module" src="firebase.js"></script>
   <script type="module" src="script.js"></script>
+
 </body>
 </html>
